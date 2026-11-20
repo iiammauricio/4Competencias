@@ -1,76 +1,119 @@
 <html>
 <head>
-<title>Hola</title>
-</head>
-<body bgcolor="Negro">
-        <html>
-    <head>
-        <title>Hola</title>
-        <style>
-            body {
-                background-color: black;
-                color: white;
-                font-family: "Times New Roman", Times, serif;
-                text-align: justify;
+    <title>Hola</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            color: white;
+            font-family: "Times New Roman", Times, serif;
+            text-align: justify;
+        }
+
+        .contenido {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .contenido p {
+            flex: 1;
+            text-align: justify;
+        }
+
+        .contenido img {
+            width: 350px;
+            max-width: 40%;
+            height: auto;
+        }
+
+        .boton {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 10px 18px;
+            background-color: rgb(255, 0, 0);
+            color: rgb(255, 245, 245);
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .buscador {
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .buscador input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            border: 1px solid #777;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .contenido {
+                flex-direction: column;
+                align-items: center;
             }
-.contenido {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 30px;
-    max-width: 1100px;
-    margin: 20px auto;
-    padding: 0 20px;
-}
-.contenido p {
-    flex: 1;
-    text-align: justify;
-}
 
-.contenido img {
-    width: 350px;
-    max-width: 40%;
-    height: auto;
-}
-.boton {
-    display: inline-block;
-    padding: 10px 18px;
-    background-color: rgb(255, 0, 0);
-    color: rgb(255, 245, 245);
-    text-decoration: none;
-    border-radius: 5px;
-}
-.boton {
-    display: block;
-    width: fit-content;
-    margin: 20px auto;
-    /* Conserva aquí los demás estilos del botón */
-}
+            .contenido img {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h1>
+            <font color="Blue">
+                <marquee>Mi Primera Pagina</marquee>
+            </font>
+        </h1>
+    </center>
 
-        </style>
-    </head>
-    <body>
+    <div class="buscador">
+        <input
+            type="search"
+            id="buscador"
+            placeholder="Buscar palabras clave"
+            aria-label="Buscar en la página"
+        >
+    </div>
 
-        <center>
-    <h1>
-        <font color="Blue">
-            <marquee>Mi Primera Pagina</marquee>
-        </font>
-    </h1>
-</center>
+    <div class="contenido buscable">
+        <p>
+            Las Artes Marciales Mixtas (AMM o MMA, por sus siglas en inglés) son un
+            deporte de combate de contacto pleno que combina técnicas de pie
+            (striking) —como boxeo, muay thai, kickboxing y taekwondo— con técnicas
+            de lucha en el suelo y agarres (grappling) —como jiu-jitsu brasileño,
+            lucha libre y judo—.
+        </p>
 
-<div class="contenido">
-    <p>
-        Las Artes Marciales Mixtas (AMM o MMA, por sus siglas en inglés) son un
-        deporte de combate de contacto pleno que combina técnicas de pie
-        (striking) —como boxeo, muay thai, kickboxing y taekwondo— con técnicas
-        de lucha en el suelo y agarres (grappling) —como jiu-jitsu brasileño,
-        lucha libre y judo—.
-    </p>
+        <img src="maluma.jpg" alt="Maluma">
+    </div>
 
-    <img src="maluma.jpg" alt="Maluma">
-</div>
-  <a class="boton" href="mipagina2.html">Ir a la segunda página</a>      
+    <a class="boton" href="mipagina2.html">Ir a la segunda página</a>
 
+    <script>
+        const buscador = document.getElementById("buscador");
+        const elementosBuscables = document.querySelectorAll(".buscable");
+
+        buscador.addEventListener("input", function () {
+            const texto = buscador.value.toLower.toLowerCase();
+
+            elementosBuscables.forEach(function (elemento) {
+                const coincide = elemento.textContent.toLowerCase().includes(texto);
+                elemento.style.display = coincide ? "" : "none";
+            });
+        });
+    </script>
 </body>
 </html>
