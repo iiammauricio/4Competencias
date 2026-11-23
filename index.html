@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Introducción a la ofimática, el mantenimiento de computadores, los requisitos de infraestructura y la configuración de equipos.">
+    <title>Competencias en tecnología</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --fondo: #f3f7f6;
+            --texto: #18312d;
+            --verde: #087f66;
+            --verde-oscuro: #075b4b;
+            --suave: #e4f2ee;
+            --borde: #d7e5e0;
+            --superficie: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--fondo);
+            color: var(--texto);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.65;
+        }
+
+        body.tema-oscuro {
+            color-scheme: dark;
+            --fondo: #101a18;
+            --texto: #e4f0ed;
+            --verde-oscuro: #9ce3ce;
+            --suave: #203b34;
+            --borde: #36534a;
+            --superficie: #182724;
+        }
+
+        header {
+            padding: 64px 20px 52px;
+            background: linear-gradient(135deg, #075b4b, #119879);
+            color: white;
+        }
+
+        .hero-contenido {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+            align-items: center;
+            gap: 32px;
+            width: min(100%, 1040px);
+            margin: auto;
+        }
+
+        .hero-texto {
+            text-align: left;
+        }
+
+        .hero-ilustracion {
+            display: block;
+            width: min(100%, 390px);
+            height: auto;
+            margin: auto;
+        }
+
+        header .etiqueta {
+            margin: 0 0 8px;
+            color: #c9f3e7;
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0 auto 12px;
+            max-width: 760px;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            line-height: 1.15;
+        }
+
+        .hero-texto h1 {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .hero-texto p {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        header p {
+            max-width: 680px;
+            margin: 0 auto;
+            color: #e7f8f3;
+            font-size: 1.08rem;
+        }
+
+        body > nav {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--superficie);
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .menu {
+            position: relative;
+        }
+
+        .menu summary {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--verde-oscuro);
+            color: var(--superficie);
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: bold;
+        }
+
+        .opciones {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 50%;
+            display: grid;
+            min-width: 250px;
+            padding: 8px;
+            transform: translateX(-50%);
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            background: var(--superficie);
+            box-shadow: 0 8px 20px rgba(24, 49, 45, 0.14);
+        }
+
+        .opciones a {
+            padding: 10px 12px;
+            border-radius: 7px;
+            color: var(--texto);
+            font-size: 0.92rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .opciones a:hover,
+        .opciones a:focus-visible,
+        .opciones a[aria-current="page"] {
+            background: var(--suave);
+            outline: none;
+        }
+
+        .opciones a[hidden] {
+            display: none;
+        }
+
+        .control-tema {
+            padding: 8px 14px;
+            border: 1px solid var(--borde);
+            border-radius: 20px;
+            background: var(--superficie);
+            color: var(--texto);
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.92rem;
+            font-weight: bold;
+        }
+
+        .control-tema:hover,
+        .control-tema:focus-visible {
+            background: var(--suave);
+            outline: 2px solid var(--verde);
+            outline-offset: 2px;
+        }
+
+        main {
+            width: min(100% - 32px, 1000px);
+            margin: 38px auto;
+        }
+
+        .pagina {
+            display: none;
+        }
+
+        .pagina.activa {
+            display: block;
+        }
+
+        .pagina .temas {
+            grid-template-columns: minmax(0, 1fr);
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .busqueda {
+            max-width: 680px;
+            margin: 0 auto 12px;
+        }
+
+        .busqueda label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--verde-oscuro);
+            font-weight: bold;
+        }
+
+        .busqueda input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            background: var(--superficie);
+            color: var(--texto);
+            font: inherit;
+        }
+
+        .busqueda input:focus-visible {
+            outline: 3px solid #9fe0cb;
+            outline-offset: 2px;
+        }
+
+        .estado-busqueda {
+            min-height: 1.65em;
+            margin: 0 auto 18px;
+            color: var(--texto);
+            text-align: center;
+        }
+
+        .introduccion {
+            margin: 0 auto 28px;
+            max-width: 760px;
+            text-align: center;
+        }
+
+        .tarjetas-inicio {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            max-width: 880px;
+            margin: 30px auto;
+        }
+
+        .tarjeta-tema {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 18px;
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            background: var(--superficie);
+            box-shadow: 0 5px 18px rgba(24, 49, 45, 0.05);
+        }
+
+        .tarjeta-icono {
+            flex: 0 0 44px;
+            width: 44px;
+            height: 44px;
+            padding: 9px;
+            border-radius: 12px;
+            background: var(--suave);
+            color: var(--verde-oscuro);
+        }
+
+        .tarjeta-tema h3 {
+            margin: 0 0 4px;
+            color: var(--verde-oscuro);
+            font-size: 1rem;
+        }
+
+        .tarjeta-tema p {
+            margin: 0;
+            font-size: 0.92rem;
+        }
+
+        .temas {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        article {
+            padding: 25px;
+            background: var(--superficie);
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            box-shadow: 0 5px 18px rgba(24, 49, 45, 0.05);
+            scroll-margin-top: 85px;
+        }
+
+        .numero {
+            display: inline-grid;
+            width: 38px;
+            height: 38px;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--suave);
+            color: var(--verde-oscuro);
+            font-weight: bold;
+        }
+
+        h2 {
+            margin: 14px 0 8px;
+            color: var(--verde-oscuro);
+            font-size: 1.35rem;
+        }
+
+        article p {
+            margin: 0 0 12px;
+        }
+
+        article h3 {
+            margin: 16px 0 6px;
+            font-size: 1rem;
+        }
+
+        ul {
+            margin: 6px 0 0;
+            padding-left: 21px;
+        }
+
+        .tabla-scroll {
+            overflow-x: auto;
+            margin-top: 12px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 520px;
+            border-collapse: collapse;
+            background: var(--superficie);
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            border: 1px solid var(--borde);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: var(--suave);
+            color: var(--verde-oscuro);
+        }
+
+        li + li {
+            margin-top: 4px;
+        }
+
+        .conclusion {
+            margin-top: 24px;
+            padding: 22px 24px;
+            border-left: 4px solid var(--verde);
+            border-radius: 8px;
+            background: var(--suave);
+        }
+
+        .conclusion h2 {
+            margin-top: 0;
+        }
+
+        .diagrama {
+            margin: 22px 0;
+            padding: 18px;
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            background: var(--suave);
+        }
+
+        .diagrama svg {
+            display: block;
+            width: min(100%, 620px);
+            height: auto;
+            margin: auto;
+            border-radius: 10px;
+            background: #e4f2ee;
+        }
+
+        .diagrama figcaption {
+            margin-top: 10px;
+            color: var(--texto);
+            font-size: 0.92rem;
+            text-align: center;
+        }
+
+        .quiz {
+            margin-top: 24px;
+            padding: 20px;
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            background: var(--suave);
+        }
+
+        .quiz h3 {
+            margin: 0 0 12px;
+            color: var(--verde-oscuro);
+        }
+
+        .quiz fieldset {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        .quiz legend {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .quiz label {
+            display: block;
+            margin: 7px 0;
+            cursor: pointer;
+        }
+
+        .quiz input {
+            margin-right: 7px;
+            accent-color: var(--verde);
+        }
+
+        .quiz button,
+        .navegacion-tema a {
+            display: inline-block;
+            padding: 9px 14px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--verde-oscuro);
+            color: var(--superficie);
+            font: inherit;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .quiz button:hover,
+        .navegacion-tema a:hover {
+            filter: brightness(1.12);
+        }
+
+        .resultado-quiz {
+            min-height: 1.6em;
+            margin: 10px 0 0;
+            font-weight: bold;
+        }
+
+        .navegacion-tema {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 10px;
+            max-width: 860px;
+            margin: 18px auto 0;
+        }
+
+        .navegacion-tema a.inicio-link {
+            background: var(--suave);
+            color: var(--verde-oscuro);
+        }
+
+        footer {
+            padding: 22px 16px;
+            background: #18312d;
+            color: #e7f8f3;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 680px) {
+            header {
+                padding: 48px 18px 40px;
+            }
+
+            .hero-contenido {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .hero-texto {
+                text-align: center;
+            }
+
+            .hero-texto h1 {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-texto p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-ilustracion {
+                width: min(78%, 300px);
+            }
+
+            .temas {
+                grid-template-columns: 1fr;
+            }
+
+            .tarjetas-inicio {
+                grid-template-columns: 1fr;
+            }
+
+            body > nav {
+                position: static;
+            }
+
+            .opciones {
+                left: 0;
+                transform: none;
+            }
+
+            .opciones a {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="hero-contenido">
+            <div class="hero-texto">
+                <p class="etiqueta">Tecnología e informática</p>
+                <h1>Competencias para el uso y cuidado de los equipos</h1>
+                <p>Aprende a trabajar con tecnología de forma eficiente, segura y organizada.</p>
+            </div>
+            <svg class="hero-ilustracion" viewBox="0 0 420 260" role="img" aria-label="Ilustración de un computador de escritorio">
+                <circle cx="210" cy="130" r="115" fill="#ffffff" opacity=".12"/>
+                <rect x="70" y="46" width="228" height="148" rx="14" fill="#123d35"/>
+                <rect x="82" y="58" width="204" height="124" rx="7" fill="#d5f4e9"/>
+                <rect x="98" y="76" width="92" height="12" rx="6" fill="#119879"/>
+                <rect x="98" y="98" width="154" height="7" rx="3.5" fill="#80b9a7"/>
+                <rect x="98" y="113" width="132" height="7" rx="3.5" fill="#80b9a7"/>
+                <rect x="98" y="128" width="146" height="7" rx="3.5" fill="#80b9a7"/>
+                <circle cx="263" cy="151" r="13" fill="#f3c969"/>
+                <path d="M168 194h32v18h-32z" fill="#123d35"/>
+                <path d="M146 214h76l16 10H130z" fill="#e7f8f3"/>
+                <rect x="311" y="93" width="42" height="121" rx="8" fill="#123d35"/>
+                <rect x="319" y="104" width="26" height="74" rx="4" fill="#d5f4e9"/>
+                <circle cx="332" cy="193" r="5" fill="#f3c969"/>
+                <circle cx="90" cy="218" r="7" fill="#f3c969"/>
+                <circle cx="355" cy="63" r="6" fill="#d5f4e9"/>
+            </svg>
+        </div>
+    </header>
+
+    <nav aria-label="Navegación por temas">
+        <details class="menu">
+            <summary>Menú de temas</summary>
+            <div class="opciones">
+                <a href="#inicio" data-pagina="inicio">Inicio</a>
+                <a href="#ofimatica" data-pagina="ofimatica">Ofimática</a>
+                <a href="#mantenimiento" data-pagina="mantenimiento">Mantenimiento de equipos</a>
+                <a href="#infraestructura" data-pagina="infraestructura">Requisitos de infraestructura</a>
+                <a href="#configuracion" data-pagina="configuracion">Configuración de equipos</a>
+            </div>
+        </details>
+        <button class="control-tema" id="control-tema" type="button" aria-pressed="false">Activar modo oscuro</button>
+    </nav>
+
+    <main>
+        <section class="pagina activa" id="inicio" aria-labelledby="titulo-inicio">
+            <h2 id="titulo-inicio">Bienvenido a la página de competencias tecnológicas</h2>
+            <p class="introduccion">
+                Explora los cuatro temas usando el menú. Cada opción abre una sección independiente para que puedas concentrarte en el contenido que necesitas.
+            </p>
+
+            <div class="tarjetas-inicio" aria-label="Resumen de los temas">
+                <article class="tarjeta-tema">
+                    <svg class="tarjeta-icono" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 3h9l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                        <path d="M14 3v5h5M9 12h7M9 16h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                    <div><h3>Ofimática</h3><p>Documentos, hojas de cálculo, presentaciones y colaboración.</p></div>
+                </article>
+                <article class="tarjeta-tema">
+                    <svg class="tarjeta-icono" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M14 6a5 5 0 0 0-6.7 6.7L3 17v4h4l4.3-4.3A5 5 0 0 0 18 10l-3 3-4-4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                    </svg>
+                    <div><h3>Mantenimiento</h3><p>Prevención de fallas, cuidado físico y protección de datos.</p></div>
+                </article>
+                <article class="tarjeta-tema">
+                    <svg class="tarjeta-icono" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="6" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                        <rect x="3" y="14" width="18" height="6" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                        <path d="M7 7h.01M7 17h.01M11 7h7M11 17h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                    <div><h3>Infraestructura</h3><p>Recursos, conectividad, seguridad y espacio de trabajo.</p></div>
+                </article>
+                <article class="tarjeta-tema">
+                    <svg class="tarjeta-icono" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                        <path d="M8 21h8M12 17v4M7 8h10M7 11h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                    <div><h3>Configuración</h3><p>Preparación del sistema, aplicaciones, cuentas y periféricos.</p></div>
+                </article>
+            </div>
+            <p class="introduccion">Para abrir un tema, selecciónalo en el menú superior.</p>
+
+            <section class="conclusion" aria-labelledby="titulo-conclusion">
+                <h2 id="titulo-conclusion">¿Qué encontrarás?</h2>
+                <p>Información sobre herramientas de ofimática, el cuidado de los computadores, la planificación de infraestructura y los pasos para configurar equipos de manera segura.</p>
+            </section>
+        </section>
+
+        <section class="pagina" id="ofimatica" aria-labelledby="titulo-ofimatica">
+            <div class="temas">
+                <article>
+                    <span class="numero" aria-hidden="true">01</span>
+                    <h2 id="titulo-ofimatica">Ofimática</h2>
+                    <div class="busqueda">
+                        <label for="buscador-ofimatica">Buscar en Ofimática</label>
+                        <input class="buscador-seccion" type="search" id="buscador-ofimatica" placeholder="Escribe una palabra clave...">
+                    </div>
+                    <p class="estado-busqueda" aria-live="polite">Escribe una palabra para buscar en este tema.</p>
+                    <div class="bloque-buscable">
+                        <p>La ofimática es el conjunto de programas y servicios digitales que ayudan a crear, organizar, analizar y compartir información. Se utiliza en empresas, instituciones educativas y en el trabajo diario.</p>
+                    </div>
+                    <section class="bloque-buscable">
+                        <h3>Herramientas y usos</h3>
+                        <ul>
+                            <li><strong>Procesadores de texto:</strong> permiten redactar informes, cartas y trabajos; aplicar formato, insertar tablas y revisar ortografía.</li>
+                            <li><strong>Hojas de cálculo:</strong> programas como Excel o Calc organizan datos en filas y columnas, realizan cálculos con fórmulas y presentan resultados en gráficos.</li>
+                            <li><strong>Presentaciones:</strong> combinan texto, imágenes, gráficos y otros recursos para explicar ideas ante un público.</li>
+                            <li><strong>Correo y calendario:</strong> facilitan la comunicación, la coordinación de reuniones y el seguimiento de tareas.</li>
+                            <li><strong>Almacenamiento en la nube:</strong> permite guardar archivos en línea, acceder desde distintos dispositivos y colaborar en documentos.</li>
+                        </ul>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Buenas prácticas</h3>
+                        <p>Usa nombres claros para los archivos, guarda versiones importantes, revisa los permisos antes de compartir y protege las cuentas con contraseñas seguras. En hojas de cálculo, verifica las fórmulas y los datos antes de utilizar los resultados.</p>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Ejemplo de trabajo integrado</h3>
+                        <ol>
+                            <li>Redacta un informe con el objetivo, los resultados y las conclusiones.</li>
+                            <li>Organiza los datos en una hoja de cálculo y utiliza fórmulas para calcular totales o promedios.</li>
+                            <li>Crea un gráfico para mostrar los resultados más importantes.</li>
+                            <li>Resume los hallazgos en una presentación y comparte los archivos con las personas autorizadas.</li>
+                        </ol>
+                        <p>Este flujo permite combinar varias herramientas para completar una tarea, en lugar de tratar cada documento por separado.</p>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Colaboración y formatos</h3>
+                        <p>Al trabajar en equipo, acuerden dónde guardar los archivos y cómo nombrar las versiones. Comprueba que las personas tengan permiso para editar o solo consultar. Antes de enviar un documento, revisa que el formato se pueda abrir en el equipo de destino; para compartir una versión final que no requiera edición, suele ser útil exportarla a PDF.</p>
+                    </section>
+                    <section class="quiz" aria-labelledby="quiz-ofimatica">
+                        <h3 id="quiz-ofimatica">Comprueba lo aprendido</h3>
+                        <form class="cuestionario" data-respuesta="b">
+                            <fieldset>
+                                <legend>¿Para qué se usa principalmente una hoja de cálculo?</legend>
+                                <label><input type="radio" name="quiz-ofimatica" value="a"> Para limpiar físicamente el computador.</label>
+                                <label><input type="radio" name="quiz-ofimatica" value="b"> Para organizar datos y realizar cálculos.</label>
+                                <label><input type="radio" name="quiz-ofimatica" value="c"> Para configurar una red inalámbrica.</label>
+                            </fieldset>
+                            <button type="submit">Revisar respuesta</button>
+                            <p class="resultado-quiz" aria-live="polite"></p>
+                        </form>
+                    </section>
+                </article>
+            </div>
+            <nav class="navegacion-tema" aria-label="Navegación entre temas">
+                <a class="inicio-link" href="#inicio">Volver a Inicio</a>
+                <a href="#mantenimiento">Siguiente: Mantenimiento</a>
+            </nav>
+        </section>
+
+        <section class="pagina" id="mantenimiento" aria-labelledby="titulo-mantenimiento">
+            <div class="temas">
+                <article>
+                    <span class="numero" aria-hidden="true">02</span>
+                    <h2 id="titulo-mantenimiento">Mantenimiento de equipos de cómputo</h2>
+                    <div class="busqueda">
+                        <label for="buscador-mantenimiento">Buscar en Mantenimiento de equipos</label>
+                        <input class="buscador-seccion" type="search" id="buscador-mantenimiento" placeholder="Escribe una palabra clave...">
+                    </div>
+                    <p class="estado-busqueda" aria-live="polite">Escribe una palabra para buscar en este tema.</p>
+                    <div class="bloque-buscable">
+                        <p>El mantenimiento comprende las tareas que conservan el computador y sus periféricos en buen estado. Ayuda a prevenir interrupciones, proteger la información y extender la vida útil del equipo.</p>
+                    </div>
+                    <section class="bloque-buscable">
+                        <h3>Tipos de mantenimiento</h3>
+                        <ul>
+                            <li><strong>Preventivo:</strong> se realiza periódicamente para reducir la posibilidad de fallas. Incluye limpiar ventilaciones, revisar cables, actualizar programas y comprobar el estado del almacenamiento.</li>
+                            <li><strong>Correctivo:</strong> se aplica cuando ya existe un problema. Consiste en diagnosticar la causa y reparar o reemplazar el componente defectuoso.</li>
+                            <li><strong>Software:</strong> mantener el sistema y las aplicaciones actualizadas, revisar el espacio disponible y utilizar herramientas de seguridad confiables.</li>
+                            <li><strong>Hardware:</strong> inspeccionar teclado, pantalla, ventiladores y conexiones; evitar golpes, líquidos, calor excesivo y acumulación de polvo.</li>
+                        </ul>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Seguridad durante la limpieza</h3>
+                        <p>Apaga y desconecta el equipo antes de limpiar su exterior. Usa un paño suave y seco; no rocíes líquidos directamente ni abras el computador si no tienes autorización y conocimientos. Para reparaciones internas, recurre a personal capacitado y sigue las recomendaciones del fabricante.</p>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Protección de la información</h3>
+                        <p>Realiza copias de seguridad de los archivos importantes en un medio confiable. Antes de una reparación, informa al usuario y protege sus datos personales.</p>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Señales que conviene revisar</h3>
+                        <ul>
+                            <li>El equipo se apaga, se reinicia o se calienta más de lo habitual.</li>
+                            <li>Los ventiladores hacen ruidos inusuales o las salidas de aire están obstruidas.</li>
+                            <li>El sistema presenta lentitud repentina, errores frecuentes o poco espacio disponible.</li>
+                            <li>El teclado, el mouse, la pantalla u otro periférico deja de responder.</li>
+                        </ul>
+                        <p>Una señal puede tener varias causas. Anota cuándo ocurre y qué cambió recientemente; evita abrir el equipo o instalar programas de diagnóstico sin autorización.</p>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Plan preventivo orientativo</h3>
+                        <ul>
+                            <li><strong>De forma habitual:</strong> mantener el área limpia y despejada, cuidar los cables y apagar correctamente el equipo.</li>
+                            <li><strong>Periódicamente:</strong> revisar actualizaciones, espacio disponible, copias de seguridad y el estado de los periféricos.</li>
+                            <li><strong>Según el entorno y el fabricante:</strong> programar una limpieza más detallada y una revisión técnica cuando sea necesaria.</li>
+                        </ul>
+                        <p>La frecuencia debe ajustarse al uso, al ambiente y a las recomendaciones del fabricante. Llevar un registro de fechas, síntomas y acciones facilita detectar problemas recurrentes.</p>
+                    </section>
+                    <figure class="diagrama bloque-buscable">
+                        <svg viewBox="0 0 620 250" role="img" aria-labelledby="diagrama-pc-titulo">
+                            <title id="diagrama-pc-titulo">Partes externas de un computador de escritorio</title>
+                            <rect x="112" y="35" width="270" height="155" rx="12" fill="#163d35"/>
+                            <rect x="126" y="49" width="242" height="126" rx="5" fill="#d5f4e9"/>
+                            <path d="M225 190h46v22h-46z" fill="#163d35"/>
+                            <path d="M202 214h92l16 10H186z" fill="#087f66"/>
+                            <rect x="405" y="74" width="88" height="145" rx="9" fill="#163d35"/>
+                            <circle cx="449" cy="126" r="24" fill="#d5f4e9"/>
+                            <circle cx="449" cy="126" r="12" fill="#80b9a7"/>
+                            <circle cx="449" cy="195" r="5" fill="#f3c969"/>
+                            <path d="M75 73H111M494 108h50M450 219v17" stroke="#087f66" stroke-width="2" stroke-dasharray="5 5"/>
+                            <text x="18" y="67" fill="#18312d" font-size="16" font-family="Arial">Pantalla</text>
+                            <text x="500" y="97" fill="#18312d" font-size="16" font-family="Arial">Ventilación</text>
+                            <text x="405" y="246" fill="#18312d" font-size="16" font-family="Arial">Torre</text>
+                        </svg>
+                        <figcaption>Las rejillas de ventilación deben permanecer despejadas. Limpia el exterior con el equipo apagado y desconectado; las reparaciones internas corresponden a personal capacitado.</figcaption>
+                    </figure>
+                    <section class="quiz" aria-labelledby="quiz-mantenimiento">
+                        <h3 id="quiz-mantenimiento">Comprueba lo aprendido</h3>
+                        <form class="cuestionario" data-respuesta="a">
+                            <fieldset>
+                                <legend>¿Qué debes hacer antes de limpiar el exterior del computador?</legend>
+                                <label><input type="radio" name="quiz-mantenimiento" value="a"> Apagarlo y desconectarlo de la corriente.</label>
+                                <label><input type="radio" name="quiz-mantenimiento" value="b"> Rociar líquido directamente sobre la pantalla.</label>
+                                <label><input type="radio" name="quiz-mantenimiento" value="c"> Abrir la torre sin revisar las indicaciones del fabricante.</label>
+                            </fieldset>
+                            <button type="submit">Revisar respuesta</button>
+                            <p class="resultado-quiz" aria-live="polite"></p>
+                        </form>
+                    </section>
+                </article>
+            </div>
+            <nav class="navegacion-tema" aria-label="Navegación entre temas">
+                <a href="#ofimatica">Anterior: Ofimática</a>
+                <a class="inicio-link" href="#inicio">Inicio</a>
+                <a href="#infraestructura">Siguiente: Infraestructura</a>
+            </nav>
+        </section>
+
+        <section class="pagina" id="infraestructura" aria-labelledby="titulo-infraestructura">
+            <div class="temas">
+                <article>
+                    <span class="numero" aria-hidden="true">03</span>
+                    <h2 id="titulo-infraestructura">Establecer requisitos de infraestructura</h2>
+                    <div class="busqueda">
+                        <label for="buscador-infraestructura">Buscar en Infraestructura</label>
+                        <input class="buscador-seccion" type="search" id="buscador-infraestructura" placeholder="Escribe una palabra clave...">
+                    </div>
+                    <p class="estado-busqueda" aria-live="polite">Escribe una palabra para buscar en este tema.</p>
+                    <div class="bloque-buscable">
+                        <p>Establecer requisitos significa identificar los recursos tecnológicos, físicos y humanos necesarios para que un servicio o sistema funcione de manera adecuada. Primero se aclara qué tareas se realizarán, quiénes usarán el sistema y cuántos usuarios se esperan.</p>
+                    </div>
+                    <section class="bloque-buscable">
+                        <h3>Recursos tecnológicos</h3>
+                        <ul>
+                            <li><strong>Computadores:</strong> procesador, memoria RAM, almacenamiento y periféricos adecuados para las aplicaciones que se utilizarán.</li>
+                            <li><strong>Software:</strong> sistema operativo compatible, programas requeridos, licencias y herramientas de seguridad.</li>
+                            <li><strong>Red:</strong> conexión a Internet, cobertura Wi-Fi o cableada, equipos de red y capacidad suficiente para los usuarios.</li>
+                            <li><strong>Servicios:</strong> impresoras, almacenamiento compartido, servidores o servicios en la nube, según las necesidades.</li>
+                        </ul>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Espacio, seguridad y crecimiento</h3>
+                        <ul>
+                            <li>Verificar espacio físico, ventilación, mobiliario, tomas eléctricas y protección ante cortes de energía.</li>
+                            <li>Definir controles de acceso, respaldo de datos, privacidad y medidas de protección de la red.</li>
+                            <li>Considerar presupuesto, mantenimiento, soporte técnico y costos de licencias.</li>
+                            <li>Planear capacidad adicional para incorporar más usuarios o equipos en el futuro.</li>
+                        </ul>
+                        <p>Conviene registrar los requisitos y comprobarlos antes de comprar o instalar equipos. Así se evitan incompatibilidades y gastos innecesarios.</p>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Pasos para definir los requisitos</h3>
+                        <ol>
+                            <li>Consultar a las personas usuarias y describir las tareas que necesitan realizar.</li>
+                            <li>Contar usuarios, equipos y periféricos actuales; identificar qué se puede reutilizar.</li>
+                            <li>Determinar qué programas, servicios y conexiones se necesitan, y revisar sus requisitos publicados.</li>
+                            <li>Definir necesidades de seguridad, respaldo, soporte y disponibilidad.</li>
+                            <li>Comparar opciones y costos, y validar la propuesta antes de realizar compras o instalaciones.</li>
+                        </ol>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Ejemplo de una lista de requisitos</h3>
+                        <p>La siguiente tabla muestra cómo documentar necesidades para un pequeño espacio de trabajo. Las especificaciones reales deben confirmarse según el software, la cantidad de usuarios y el presupuesto.</p>
+                        <div class="tabla-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Área</th>
+                                        <th scope="col">Qué definir</th>
+                                        <th scope="col">Cómo comprobarlo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Equipos</td>
+                                        <td>Rendimiento, memoria, almacenamiento y periféricos necesarios.</td>
+                                        <td>Comparar con los requisitos de las aplicaciones que se usarán.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Red</td>
+                                        <td>Cobertura, conexión cableada o Wi-Fi y cantidad de dispositivos.</td>
+                                        <td>Probar la conexión en las áreas de trabajo y en horas de uso.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Seguridad</td>
+                                        <td>Cuentas, permisos, copias de respaldo y protección de datos.</td>
+                                        <td>Revisar las políticas y asignar responsables de soporte.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Espacio y energía</td>
+                                        <td>Ventilación, tomas eléctricas, mobiliario y protección eléctrica.</td>
+                                        <td>Inspeccionar el lugar antes de instalar los equipos.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <figure class="diagrama bloque-buscable">
+                        <svg viewBox="0 0 620 250" role="img" aria-labelledby="diagrama-red-titulo">
+                            <title id="diagrama-red-titulo">Diagrama de una red de oficina básica</title>
+                            <rect x="30" y="88" width="118" height="68" rx="12" fill="#d5f4e9" stroke="#087f66" stroke-width="3"/>
+                            <text x="53" y="128" fill="#18312d" font-size="17" font-family="Arial">Internet</text>
+                            <rect x="240" y="88" width="140" height="68" rx="12" fill="#087f66"/>
+                            <text x="265" y="128" fill="white" font-size="17" font-family="Arial">Router / Wi-Fi</text>
+                            <rect x="474" y="28" width="116" height="58" rx="10" fill="#d5f4e9" stroke="#087f66" stroke-width="3"/>
+                            <text x="495" y="64" fill="#18312d" font-size="16" font-family="Arial">Computador</text>
+                            <rect x="474" y="100" width="116" height="58" rx="10" fill="#d5f4e9" stroke="#087f66" stroke-width="3"/>
+                            <text x="502" y="136" fill="#18312d" font-size="16" font-family="Arial">Impresora</text>
+                            <rect x="474" y="172" width="116" height="58" rx="10" fill="#d5f4e9" stroke="#087f66" stroke-width="3"/>
+                            <text x="495" y="208" fill="#18312d" font-size="16" font-family="Arial">Portátil</text>
+                            <path d="M148 122h92M380 122h50M430 57v144M430 57h44M430 129h44M430 201h44" fill="none" stroke="#087f66" stroke-width="4"/>
+                            <circle cx="430" cy="122" r="7" fill="#f3c969"/>
+                        </svg>
+                        <figcaption>Ejemplo conceptual: el router conecta los equipos y servicios de la oficina. La capacidad y seguridad de la red deben definirse según la cantidad de usuarios y las aplicaciones.</figcaption>
+                    </figure>
+                    <section class="quiz" aria-labelledby="quiz-infraestructura">
+                        <h3 id="quiz-infraestructura">Comprueba lo aprendido</h3>
+                        <form class="cuestionario" data-respuesta="c">
+                            <fieldset>
+                                <legend>¿Cuál es un buen primer paso para definir la infraestructura?</legend>
+                                <label><input type="radio" name="quiz-infraestructura" value="a"> Comprar los equipos más costosos disponibles.</label>
+                                <label><input type="radio" name="quiz-infraestructura" value="b"> Instalar programas antes de conocer las necesidades.</label>
+                                <label><input type="radio" name="quiz-infraestructura" value="c"> Identificar las tareas, usuarios y recursos necesarios.</label>
+                            </fieldset>
+                            <button type="submit">Revisar respuesta</button>
+                            <p class="resultado-quiz" aria-live="polite"></p>
+                        </form>
+                    </section>
+                </article>
+            </div>
+            <nav class="navegacion-tema" aria-label="Navegación entre temas">
+                <a href="#mantenimiento">Anterior: Mantenimiento</a>
+                <a class="inicio-link" href="#inicio">Inicio</a>
+                <a href="#configuracion">Siguiente: Configuración</a>
+            </nav>
+        </section>
+
+        <section class="pagina" id="configuracion" aria-labelledby="titulo-configuracion">
+            <div class="temas">
+                <article>
+                    <span class="numero" aria-hidden="true">04</span>
+                    <h2 id="titulo-configuracion">Configuración de equipos</h2>
+                    <div class="busqueda">
+                        <label for="buscador-configuracion">Buscar en Configuración de equipos</label>
+                        <input class="buscador-seccion" type="search" id="buscador-configuracion" placeholder="Escribe una palabra clave...">
+                    </div>
+                    <p class="estado-busqueda" aria-live="polite">Escribe una palabra para buscar en este tema.</p>
+                    <div class="bloque-buscable">
+                        <p>Configurar un equipo es preparar su hardware y software para el uso previsto. La configuración debe cumplir los requisitos definidos y las políticas de seguridad de la organización.</p>
+                    </div>
+                    <section class="bloque-buscable">
+                        <h3>Proceso recomendado</h3>
+                        <ul>
+                            <li><strong>Revisión inicial:</strong> comprobar el estado físico, los componentes, los periféricos y la compatibilidad con el uso esperado.</li>
+                            <li><strong>Sistema:</strong> instalar o preparar el sistema operativo y aplicar sus actualizaciones y controladores compatibles.</li>
+                            <li><strong>Preferencias:</strong> ajustar idioma, fecha, zona horaria, pantalla, impresoras y opciones de accesibilidad según el usuario.</li>
+                            <li><strong>Conectividad:</strong> configurar la red siguiendo las instrucciones autorizadas y comprobar el acceso a los servicios necesarios.</li>
+                            <li><strong>Aplicaciones:</strong> instalar únicamente programas autorizados y verificar que abran y funcionen correctamente.</li>
+                            <li><strong>Seguridad:</strong> usar cuentas individuales, permisos adecuados, bloqueo de pantalla y protección actualizada.</li>
+                            <li><strong>Pruebas y entrega:</strong> comprobar audio, cámara, periféricos, conexión y aplicaciones; explicar al usuario las funciones básicas.</li>
+                        </ul>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Documentación y entrega</h3>
+                        <p>Al finalizar, documenta el equipo, los programas instalados y los ajustes realizados. Evita compartir contraseñas y conserva la información de configuración de forma segura.</p>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Cuentas, red y seguridad</h3>
+                        <ul>
+                            <li>Crea una cuenta para cada usuario y asigna solo los permisos necesarios para su trabajo.</li>
+                            <li>Usa una cuenta estándar para las actividades diarias; reserva las tareas administrativas para personal autorizado.</li>
+                            <li>Conecta el equipo a redes autorizadas y confirma que se aplican las medidas de seguridad requeridas.</li>
+                            <li>Configura bloqueo de pantalla, actualizaciones automáticas cuando estén permitidas y protección contra software malicioso.</li>
+                            <li>No guardes contraseñas en lugares visibles ni compartas credenciales entre varias personas.</li>
+                        </ul>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Lista de comprobación antes de entregar</h3>
+                        <ul>
+                            <li>El sistema inicia sin errores y tiene las actualizaciones y controladores compatibles.</li>
+                            <li>La conexión, el audio, la cámara, la pantalla y los periféricos funcionan correctamente.</li>
+                            <li>Las aplicaciones solicitadas abren y los permisos corresponden al usuario.</li>
+                            <li>El usuario conoce cómo iniciar sesión, guardar sus archivos y solicitar soporte.</li>
+                            <li>Los datos de configuración quedan registrados sin incluir contraseñas en texto visible.</li>
+                        </ul>
+                    </section>
+                    <section class="quiz" aria-labelledby="quiz-configuracion">
+                        <h3 id="quiz-configuracion">Comprueba lo aprendido</h3>
+                        <form class="cuestionario" data-respuesta="b">
+                            <fieldset>
+                                <legend>¿Qué tipo de cuenta conviene usar para las tareas diarias?</legend>
+                                <label><input type="radio" name="quiz-configuracion" value="a"> Una cuenta administrativa compartida por todos.</label>
+                                <label><input type="radio" name="quiz-configuracion" value="b"> Una cuenta personal con permisos necesarios y limitados.</label>
+                                <label><input type="radio" name="quiz-configuracion" value="c"> Una cuenta sin contraseña.</label>
+                            </fieldset>
+                            <button type="submit">Revisar respuesta</button>
+                            <p class="resultado-quiz" aria-live="polite"></p>
+                        </form>
+                    </section>
+                </article>
+            </div>
+            <nav class="navegacion-tema" aria-label="Navegación entre temas">
+                <a href="#infraestructura">Anterior: Infraestructura</a>
+                <a class="inicio-link" href="#inicio">Volver a Inicio</a>
+            </nav>
+        </section>
+    </main>
+
+    <footer>
+        <p>Aprender tecnología también significa utilizarla de manera responsable y cuidar los recursos.</p>
+    </footer>
+    <script>
+        const paginas = document.querySelectorAll(".pagina");
+        const enlacesMenu = document.querySelectorAll(".opciones a[data-pagina]");
+        const menu = document.querySelector(".menu");
+        const controlTema = document.getElementById("control-tema");
+
+        function normalizar(texto) {
+            return texto
+                .toLocaleLowerCase("es")
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function mostrarPagina(id) {
+            const paginaActiva = document.getElementById(id) ? id : "inicio";
+
+            paginas.forEach(function (pagina) {
+                const activa = pagina.id === paginaActiva;
+                pagina.classList.toggle("activa", activa);
+                pagina.setAttribute("aria-hidden", String(!activa));
+            });
+
+            enlacesMenu.forEach(function (enlace) {
+                if (enlace.dataset.pagina === paginaActiva) {
+                    enlace.setAttribute("aria-current", "page");
+                } else {
+                    enlace.removeAttribute("aria-current");
+                }
+            });
+
+            menu.open = false;
+            window.scrollTo(0, 0);
+        }
+
+        function actualizarPaginaDesdeHash() {
+            mostrarPagina(window.location.hash.slice(1) || "inicio");
+        }
+
+        document.querySelectorAll(".buscador-seccion").forEach(function (buscador) {
+            const pagina = buscador.closest(".pagina");
+            const bloques = pagina.querySelectorAll(".bloque-buscable");
+            const estado = pagina.querySelector(".estado-busqueda");
+
+            buscador.addEventListener("input", function () {
+                const palabraClave = normalizar(buscador.value.trim());
+                let coincidencias = 0;
+
+                bloques.forEach(function (bloque) {
+                    const coincide = palabraClave === ""
+                        || normalizar(bloque.textContent).includes(palabraClave);
+                    bloque.hidden = !coincide;
+
+                    if (coincide) {
+                        coincidencias++;
+                    }
+                });
+
+                if (palabraClave === "") {
+                    estado.textContent = "Escribe una palabra para buscar en este tema.";
+                } else if (coincidencias === 0) {
+                    estado.textContent = "No se encontró información relacionada en este tema.";
+                } else {
+                    estado.textContent = "Bloques de información encontrados: " + coincidencias + ".";
+                }
+            });
+        });
+
+        enlacesMenu.forEach(function (enlace) {
+            enlace.addEventListener("click", function () {
+                mostrarPagina(enlace.dataset.pagina);
+            });
+        });
+
+        window.addEventListener("hashchange", actualizarPaginaDesdeHash);
+        actualizarPaginaDesdeHash();
+
+        controlTema.addEventListener("click", function () {
+            const modoOscuroActivo = document.body.classList.toggle("tema-oscuro");
+            controlTema.setAttribute("aria-pressed", String(modoOscuroActivo));
+            controlTema.textContent = modoOscuroActivo ? "Activar modo claro" : "Activar modo oscuro";
+        });
+
+        document.querySelectorAll(".cuestionario").forEach(function (cuestionario) {
+            cuestionario.addEventListener("submit", function (evento) {
+                evento.preventDefault();
+                const respuesta = cuestionario.querySelector("input[type='radio']:checked");
+                const resultado = cuestionario.querySelector(".resultado-quiz");
+
+                if (!respuesta) {
+                    resultado.textContent = "Selecciona una respuesta antes de continuar.";
+                } else if (respuesta.value === cuestionario.dataset.respuesta) {
+                    resultado.textContent = "¡Correcto! Has comprendido la idea principal.";
+                } else {
+                    resultado.textContent = "Esa no es la respuesta. Revisa el tema e inténtalo de nuevo.";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
