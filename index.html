@@ -1552,7 +1552,10 @@
                     function (snapshot) {
                         let cantidad = 0;
                         snapshot.forEach(function (usuario) {
-                            cantidad += usuario.numChildren();
+                            const sesiones = usuario.val();
+                            if (sesiones && typeof sesiones === "object") {
+                                cantidad += Object.keys(sesiones).length;
+                            }
                         });
                         visitantesConectados.textContent = new Intl.NumberFormat("es-CO").format(cantidad);
                     },
