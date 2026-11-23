@@ -8,12 +8,12 @@
     <style>
         :root {
             color-scheme: light;
-            --fondo: #f3f7f6;
-            --texto: #18312d;
-            --verde: #087f66;
-            --verde-oscuro: #075b4b;
-            --suave: #e4f2ee;
-            --borde: #d7e5e0;
+            --fondo: #f3f1f2;
+            --texto: #29262a;
+            --acento: #df3f4b;
+            --acento-oscuro: #a92432;
+            --suave: #f9e8ea;
+            --borde: #e2d9dc;
             --superficie: #ffffff;
         }
 
@@ -35,18 +35,29 @@
 
         body.tema-oscuro {
             color-scheme: dark;
-            --fondo: #101a18;
-            --texto: #e4f0ed;
-            --verde-oscuro: #9ce3ce;
-            --suave: #203b34;
-            --borde: #36534a;
-            --superficie: #182724;
+            --fondo: #151417;
+            --texto: #f2edef;
+            --acento: #ff626c;
+            --acento-oscuro: #ff7b83;
+            --suave: #2a2225;
+            --borde: #494044;
+            --superficie: #211d20;
         }
 
         header {
-            padding: 64px 20px 52px;
-            background: linear-gradient(135deg, #075b4b, #119879);
+            position: relative;
+            width: min(calc(100% - 48px), 1180px);
+            min-height: 500px;
+            margin: 24px auto 36px;
+            padding: 118px 44px 48px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            background:
+                radial-gradient(circle at 76% 45%, rgba(213, 45, 59, 0.48) 0 19%, transparent 19.5%),
+                linear-gradient(112deg, #151619 0%, #21181b 62%, #2d171c 100%);
             color: white;
+            box-shadow: 0 24px 70px rgba(25, 12, 16, 0.24);
         }
 
         .hero-contenido {
@@ -64,14 +75,14 @@
 
         .hero-ilustracion {
             display: block;
-            width: min(100%, 390px);
+            width: min(100%, 450px);
             height: auto;
             margin: auto;
         }
 
         header .etiqueta {
             margin: 0 0 8px;
-            color: #c9f3e7;
+            color: #ff727a;
             font-size: 0.9rem;
             font-weight: bold;
             letter-spacing: 0.12em;
@@ -79,10 +90,13 @@
         }
 
         h1 {
-            margin: 0 auto 12px;
-            max-width: 760px;
-            font-size: clamp(2rem, 5vw, 3.2rem);
-            line-height: 1.15;
+            margin: 0 0 16px;
+            max-width: 620px;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            letter-spacing: -0.055em;
+            line-height: 0.98;
+            text-transform: uppercase;
         }
 
         .hero-texto h1 {
@@ -98,22 +112,75 @@
         header p {
             max-width: 680px;
             margin: 0 auto;
-            color: #e7f8f3;
+            color: #d8d0d2;
             font-size: 1.08rem;
         }
 
-        body > nav {
-            position: sticky;
-            top: 0;
-            z-index: 1;
+        header > nav {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            z-index: 3;
+            width: min(calc(100% - 40px), 1100px);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 0;
+            transform: translateX(-50%);
+            background: transparent;
+            border: 0;
+        }
+
+        .controles-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .fecha-hora {
+            color: rgba(255, 255, 255, 0.86);
+            font-size: 0.82rem;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .contador-visitantes {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 16px;
-            background: var(--superficie);
-            border-bottom: 1px solid var(--borde);
+            gap: 5px 16px;
+            margin: 22px auto 0;
+            color: #e9e3e5;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .contador-visitantes strong {
+            color: #ffabb0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .estado-contador {
+            flex-basis: 100%;
+            margin: 0;
+            color: #c9bec1;
+            font-size: 0.78rem;
+        }
+
+        header > nav .menu summary,
+        header > nav .control-tema {
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        header > nav .menu summary:hover,
+        header > nav .control-tema:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .menu {
@@ -123,7 +190,7 @@
         .menu summary {
             padding: 8px 16px;
             border-radius: 20px;
-            background: var(--verde-oscuro);
+            background: var(--acento-oscuro);
             color: var(--superficie);
             cursor: pointer;
             font-size: 0.92rem;
@@ -179,7 +246,7 @@
         .control-tema:hover,
         .control-tema:focus-visible {
             background: var(--suave);
-            outline: 2px solid var(--verde);
+            outline: 2px solid var(--acento);
             outline-offset: 2px;
         }
 
@@ -210,7 +277,7 @@
         .busqueda label {
             display: block;
             margin-bottom: 6px;
-            color: var(--verde-oscuro);
+            color: var(--acento-oscuro);
             font-weight: bold;
         }
 
@@ -225,8 +292,60 @@
         }
 
         .busqueda input:focus-visible {
-            outline: 3px solid #9fe0cb;
+            outline: 3px solid #ef9ca2;
             outline-offset: 2px;
+        }
+
+        .aplicaciones-office {
+            margin: 22px 0;
+        }
+
+        .pestanas-office {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin: 12px 0 0;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .pestana-office {
+            padding: 8px 12px;
+            border: 1px solid var(--borde);
+            border-bottom: 0;
+            border-radius: 8px 8px 0 0;
+            background: var(--suave);
+            color: var(--texto);
+            font: inherit;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .pestana-office[aria-selected="true"] {
+            background: var(--acento-oscuro);
+            color: #ffffff;
+        }
+
+        .pestana-office:focus-visible {
+            outline: 3px solid #ef9ca2;
+            outline-offset: 2px;
+        }
+
+        .panel-aplicacion {
+            padding: 16px;
+            border: 1px solid var(--borde);
+            border-top: 0;
+            border-radius: 0 0 10px 10px;
+            background: var(--superficie);
+        }
+
+        .panel-aplicacion[hidden] {
+            display: none;
+        }
+
+        .panel-aplicacion h3:first-child {
+            margin-top: 0;
+            color: var(--acento-oscuro);
         }
 
         .estado-busqueda {
@@ -268,12 +387,12 @@
             padding: 9px;
             border-radius: 12px;
             background: var(--suave);
-            color: var(--verde-oscuro);
+            color: var(--acento-oscuro);
         }
 
         .tarjeta-tema h3 {
             margin: 0 0 4px;
-            color: var(--verde-oscuro);
+            color: var(--acento-oscuro);
             font-size: 1rem;
         }
 
@@ -304,13 +423,13 @@
             place-items: center;
             border-radius: 12px;
             background: var(--suave);
-            color: var(--verde-oscuro);
+            color: var(--acento-oscuro);
             font-weight: bold;
         }
 
         h2 {
             margin: 14px 0 8px;
-            color: var(--verde-oscuro);
+            color: var(--acento-oscuro);
             font-size: 1.35rem;
         }
 
@@ -350,7 +469,7 @@
 
         th {
             background: var(--suave);
-            color: var(--verde-oscuro);
+            color: var(--acento-oscuro);
         }
 
         li + li {
@@ -360,7 +479,7 @@
         .conclusion {
             margin-top: 24px;
             padding: 22px 24px;
-            border-left: 4px solid var(--verde);
+            border-left: 4px solid var(--acento);
             border-radius: 8px;
             background: var(--suave);
         }
@@ -383,7 +502,7 @@
             height: auto;
             margin: auto;
             border-radius: 10px;
-            background: #e4f2ee;
+            background: #faedef;
         }
 
         .diagrama figcaption {
@@ -403,7 +522,7 @@
 
         .quiz h3 {
             margin: 0 0 12px;
-            color: var(--verde-oscuro);
+            color: var(--acento-oscuro);
         }
 
         .quiz fieldset {
@@ -425,7 +544,7 @@
 
         .quiz input {
             margin-right: 7px;
-            accent-color: var(--verde);
+            accent-color: var(--acento);
         }
 
         .quiz button,
@@ -434,7 +553,7 @@
             padding: 9px 14px;
             border: 0;
             border-radius: 8px;
-            background: var(--verde-oscuro);
+            background: var(--acento-oscuro);
             color: var(--superficie);
             font: inherit;
             font-weight: bold;
@@ -464,20 +583,23 @@
 
         .navegacion-tema a.inicio-link {
             background: var(--suave);
-            color: var(--verde-oscuro);
+            color: var(--acento-oscuro);
         }
 
         footer {
             padding: 22px 16px;
-            background: #18312d;
-            color: #e7f8f3;
+            background: #171619;
+            color: #e9e3e5;
             text-align: center;
             font-size: 0.9rem;
         }
 
         @media (max-width: 680px) {
             header {
-                padding: 48px 18px 40px;
+                width: calc(100% - 24px);
+                min-height: 0;
+                margin: 12px auto 28px;
+                padding: 112px 18px 40px;
             }
 
             .hero-contenido {
@@ -512,8 +634,38 @@
                 grid-template-columns: 1fr;
             }
 
-            body > nav {
-                position: static;
+            header > nav {
+                top: 12px;
+                width: calc(100% - 24px);
+                gap: 8px;
+            }
+
+            .controles-header {
+                gap: 8px;
+            }
+
+            .fecha-hora {
+                font-size: 0.72rem;
+            }
+
+            .contador-visitantes {
+                margin-top: 16px;
+                font-size: 0.82rem;
+            }
+
+            header > nav .menu summary,
+            header > nav .control-tema {
+                padding: 7px 10px;
+                font-size: 0.8rem;
+            }
+
+            .pestanas-office {
+                gap: 5px;
+            }
+
+            .pestana-office {
+                padding: 7px 9px;
+                font-size: 0.82rem;
             }
 
             .opciones {
@@ -535,45 +687,57 @@
 </head>
 <body>
     <header>
+        <nav aria-label="Navegación por temas">
+            <details class="menu">
+                <summary>Menú de temas</summary>
+                <div class="opciones">
+                    <a href="#inicio" data-pagina="inicio">Inicio</a>
+                    <a href="#ofimatica" data-pagina="ofimatica">Ofimática</a>
+                    <a href="#mantenimiento" data-pagina="mantenimiento">Mantenimiento de equipos</a>
+                    <a href="#infraestructura" data-pagina="infraestructura">Requisitos de infraestructura</a>
+                    <a href="#configuracion" data-pagina="configuracion">Configuración de equipos</a>
+                </div>
+            </details>
+            <div class="controles-header">
+                <time class="fecha-hora" id="fecha-hora" aria-label="Fecha y hora local"></time>
+                <button class="control-tema" id="control-tema" type="button" aria-pressed="false">Activar modo oscuro</button>
+            </div>
+        </nav>
         <div class="hero-contenido">
             <div class="hero-texto">
-                <p class="etiqueta">Tecnología e informática</p>
-                <h1>Competencias para el uso y cuidado de los equipos</h1>
-                <p>Aprende a trabajar con tecnología de forma eficiente, segura y organizada.</p>
+                <p class="etiqueta">Tecnología / Aprendizaje</p>
+                <h1>Competencias<br>digitales</h1>
+                <p>Ofimática, mantenimiento, infraestructura y configuración de equipos.</p>
             </div>
-            <svg class="hero-ilustracion" viewBox="0 0 420 260" role="img" aria-label="Ilustración de un computador de escritorio">
-                <circle cx="210" cy="130" r="115" fill="#ffffff" opacity=".12"/>
-                <rect x="70" y="46" width="228" height="148" rx="14" fill="#123d35"/>
-                <rect x="82" y="58" width="204" height="124" rx="7" fill="#d5f4e9"/>
-                <rect x="98" y="76" width="92" height="12" rx="6" fill="#119879"/>
-                <rect x="98" y="98" width="154" height="7" rx="3.5" fill="#80b9a7"/>
-                <rect x="98" y="113" width="132" height="7" rx="3.5" fill="#80b9a7"/>
-                <rect x="98" y="128" width="146" height="7" rx="3.5" fill="#80b9a7"/>
-                <circle cx="263" cy="151" r="13" fill="#f3c969"/>
-                <path d="M168 194h32v18h-32z" fill="#123d35"/>
-                <path d="M146 214h76l16 10H130z" fill="#e7f8f3"/>
-                <rect x="311" y="93" width="42" height="121" rx="8" fill="#123d35"/>
-                <rect x="319" y="104" width="26" height="74" rx="4" fill="#d5f4e9"/>
-                <circle cx="332" cy="193" r="5" fill="#f3c969"/>
-                <circle cx="90" cy="218" r="7" fill="#f3c969"/>
-                <circle cx="355" cy="63" r="6" fill="#d5f4e9"/>
+            <svg class="hero-ilustracion" viewBox="0 0 460 340" role="img" aria-label="Ilustración original de un computador y circuitos tecnológicos">
+                <circle cx="244" cy="164" r="137" fill="#c62e3b" opacity=".86"/>
+                <circle cx="244" cy="164" r="112" fill="none" stroke="#f46a72" stroke-width="2" opacity=".65"/>
+                <path d="M53 69h40m-20-20v40M366 72h42m-21-21v42M59 260h42m-21-21v42M362 256h45m-22-22v44" stroke="#f7a0a5" stroke-width="2" opacity=".8"/>
+                <circle cx="73" cy="69" r="5" fill="#fff0f1"/>
+                <circle cx="386" cy="72" r="5" fill="#fff0f1"/>
+                <circle cx="80" cy="260" r="5" fill="#fff0f1"/>
+                <circle cx="385" cy="256" r="5" fill="#fff0f1"/>
+                <rect x="90" y="83" width="260" height="164" rx="13" fill="#18181c" stroke="#f4b0b4" stroke-width="3"/>
+                <rect x="104" y="97" width="232" height="136" rx="6" fill="#28272c"/>
+                <rect x="122" y="116" width="96" height="13" rx="6.5" fill="#f05a64"/>
+                <rect x="122" y="143" width="170" height="7" rx="3.5" fill="#e4c4c6" opacity=".82"/>
+                <rect x="122" y="160" width="147" height="7" rx="3.5" fill="#e4c4c6" opacity=".56"/>
+                <rect x="122" y="177" width="158" height="7" rx="3.5" fill="#e4c4c6" opacity=".4"/>
+                <circle cx="305" cy="202" r="13" fill="#e84954"/>
+                <path d="M196 247h48v24h-48z" fill="#17171a"/>
+                <path d="M170 273h100l17 12H153z" fill="#f5dadd"/>
+                <path d="M111 305h237" stroke="#f48b92" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+                <circle cx="130" cy="305" r="4" fill="#fff0f1"/>
+                <circle cx="329" cy="305" r="4" fill="#fff0f1"/>
             </svg>
         </div>
+        <div class="contador-visitantes" aria-label="Contador de visitantes">
+            <span><strong id="visitantes-conectados">—</strong> personas conectadas ahora</span>
+            <span aria-hidden="true">·</span>
+            <span><strong id="visitas-acumuladas">—</strong> visitas acumuladas</span>
+            <p class="estado-contador" id="estado-contador" role="status">El contador requiere configurar Firebase.</p>
+        </div>
     </header>
-
-    <nav aria-label="Navegación por temas">
-        <details class="menu">
-            <summary>Menú de temas</summary>
-            <div class="opciones">
-                <a href="#inicio" data-pagina="inicio">Inicio</a>
-                <a href="#ofimatica" data-pagina="ofimatica">Ofimática</a>
-                <a href="#mantenimiento" data-pagina="mantenimiento">Mantenimiento de equipos</a>
-                <a href="#infraestructura" data-pagina="infraestructura">Requisitos de infraestructura</a>
-                <a href="#configuracion" data-pagina="configuracion">Configuración de equipos</a>
-            </div>
-        </details>
-        <button class="control-tema" id="control-tema" type="button" aria-pressed="false">Activar modo oscuro</button>
-    </nav>
 
     <main>
         <section class="pagina activa" id="inicio" aria-labelledby="titulo-inicio">
@@ -643,6 +807,116 @@
                             <li><strong>Almacenamiento en la nube:</strong> permite guardar archivos en línea, acceder desde distintos dispositivos y colaborar en documentos.</li>
                         </ul>
                     </section>
+                    <h3>Aplicaciones de Microsoft Office</h3>
+                    <p class="bloque-buscable">Microsoft Office y Microsoft 365 reúnen aplicaciones para producir y administrar información. Las herramientas incluidas dependen de la versión, la licencia y la cuenta; estas pestañas resumen las más conocidas.</p>
+                    <div class="aplicaciones-office">
+                        <div class="pestanas-office" role="tablist" aria-label="Aplicaciones de Microsoft Office">
+                            <button class="pestana-office" id="pestana-word" type="button" role="tab" aria-selected="true" aria-controls="panel-word" tabindex="0">Word</button>
+                            <button class="pestana-office" id="pestana-excel" type="button" role="tab" aria-selected="false" aria-controls="panel-excel" tabindex="-1">Excel</button>
+                            <button class="pestana-office" id="pestana-powerpoint" type="button" role="tab" aria-selected="false" aria-controls="panel-powerpoint" tabindex="-1">PowerPoint</button>
+                            <button class="pestana-office" id="pestana-outlook" type="button" role="tab" aria-selected="false" aria-controls="panel-outlook" tabindex="-1">Outlook</button>
+                            <button class="pestana-office" id="pestana-onenote" type="button" role="tab" aria-selected="false" aria-controls="panel-onenote" tabindex="-1">OneNote</button>
+                            <button class="pestana-office" id="pestana-teams" type="button" role="tab" aria-selected="false" aria-controls="panel-teams" tabindex="-1">Teams</button>
+                            <button class="pestana-office" id="pestana-onedrive" type="button" role="tab" aria-selected="false" aria-controls="panel-onedrive" tabindex="-1">OneDrive</button>
+                            <button class="pestana-office" id="pestana-access" type="button" role="tab" aria-selected="false" aria-controls="panel-access" tabindex="-1">Access</button>
+                        </div>
+                        <div class="panel-aplicacion" id="panel-word" role="tabpanel" aria-labelledby="pestana-word">
+                            <section class="bloque-buscable">
+                                <h3>Word: documentos claros y estructurados</h3>
+                                <p>Word se utiliza para cartas, informes, trabajos y manuales. Los estilos de título crean una jerarquía coherente y permiten generar una tabla de contenido automática; los encabezados, pies de página, saltos de sección y numeración ayudan a organizar documentos extensos.</p>
+                                <ul>
+                                    <li>Aplica estilos en vez de cambiar cada título manualmente; actualiza la tabla de contenido cuando cambie el documento.</li>
+                                    <li>Usa comentarios y control de cambios para revisar en equipo, y acepta o rechaza cambios antes de distribuir la versión final.</li>
+                                    <li>Comprueba ortografía, citas, enlaces, márgenes y contraste; agrega texto alternativo a imágenes importantes.</li>
+                                    <li>Guarda una copia editable y exporta a PDF cuando necesites conservar la presentación para lectura o impresión.</li>
+                                </ul>
+                            </section>
+                        </div>
+                        <div class="panel-aplicacion" id="panel-excel" role="tabpanel" aria-labelledby="pestana-excel" hidden>
+                            <section class="bloque-buscable">
+                                <h3>Excel: análisis y control de datos</h3>
+                                <p>Excel organiza información en libros, hojas, tablas y rangos. Las fórmulas calculan resultados a partir de los datos; funciones como SUMA, PROMEDIO, SI y CONTAR.SI responden a necesidades distintas. Las referencias absolutas permiten fijar una celda al copiar una fórmula.</p>
+                                <ul>
+                                    <li>Convierte conjuntos de datos en tablas con encabezados claros y una fila por registro; evita combinar celdas dentro de los datos.</li>
+                                    <li>Valida entradas, aplica formatos condicionales con moderación y revisa errores como referencias rotas o divisiones por cero.</li>
+                                    <li>Usa tablas dinámicas para resumir categorías y gráficos adecuados para comparar valores o mostrar tendencias.</li>
+                                    <li>Verifica muestras de fórmulas con cálculos independientes: un resultado calculado no garantiza que los datos de origen sean correctos.</li>
+                                </ul>
+                            </section>
+                        </div>
+                        <div class="panel-aplicacion" id="panel-powerpoint" role="tabpanel" aria-labelledby="pestana-powerpoint" hidden>
+                            <section class="bloque-buscable">
+                                <h3>PowerPoint: comunicar una idea</h3>
+                                <p>PowerPoint permite construir presentaciones para explicar una propuesta, resumir resultados o enseñar un proceso. Una secuencia útil plantea el objetivo, desarrolla pocas ideas principales y cierra con una conclusión o una acción.</p>
+                                <ul>
+                                    <li>Usa una plantilla consistente, títulos descriptivos y texto breve; no sustituyas la explicación oral por párrafos extensos.</li>
+                                    <li>Elige gráficos legibles, contrasta texto y fondo, y agrega texto alternativo a imágenes que aporten información.</li>
+                                    <li>Incluye notas del orador para ampliar puntos sin recargar la diapositiva y ensaya la duración con anticipación.</li>
+                                    <li>Revisa enlaces, fuentes y videos en el equipo donde presentarás; exporta a PDF como alternativa de consulta.</li>
+                                </ul>
+                            </section>
+                        </div>
+                        <div class="panel-aplicacion" id="panel-outlook" role="tabpanel" aria-labelledby="pestana-outlook" hidden>
+                            <section class="bloque-buscable">
+                                <h3>Outlook: correo y organización</h3>
+                                <p>Outlook integra correo, calendario y contactos, según la cuenta y la versión. Permite coordinar reuniones, revisar disponibilidad y organizar mensajes con carpetas, categorías o reglas.</p>
+                                <ul>
+                                    <li>Escribe asuntos concretos, identifica la acción solicitada y revisa destinatarios y archivos adjuntos antes de enviar.</li>
+                                    <li>Usa CC para informar a personas y CCO cuando debas proteger las direcciones de un grupo de destinatarios.</li>
+                                    <li>Al programar una reunión, define objetivo, horario, participantes y materiales; actualiza la invitación si hay cambios.</li>
+                                    <li>Trata con cautela enlaces y archivos inesperados, incluso si parecen provenir de un contacto conocido.</li>
+                                </ul>
+                            </section>
+                        </div>
+                        <div class="panel-aplicacion" id="panel-onenote" role="tabpanel" aria-labelledby="pestana-onenote" hidden>
+                            <section class="bloque-buscable">
+                                <h3>OneNote: notas conectadas</h3>
+                                <p>OneNote organiza notas en blocs, secciones y páginas. Es útil para apuntes de clase, reuniones, procedimientos y proyectos que requieren reunir texto, imágenes, listas y referencias.</p>
+                                <ul>
+                                    <li>Define una estructura sencilla y usa títulos, etiquetas y búsqueda para recuperar información con rapidez.</li>
+                                    <li>Registra la fecha, el tema y los acuerdos; distingue tareas pendientes de notas informativas.</li>
+                                    <li>Comparte solo el bloc o la sección necesaria y comprueba quién puede consultar o editar.</li>
+                                    <li>Verifica que la sincronización haya terminado antes de depender de una nota en otro dispositivo.</li>
+                                </ul>
+                            </section>
+                        </div>
+                        <div class="panel-aplicacion" id="panel-teams" role="tabpanel" aria-labelledby="pestana-teams" hidden>
+                            <section class="bloque-buscable">
+                                <h3>Teams: colaboración y reuniones</h3>
+                                <p>Teams reúne chat, reuniones y espacios de trabajo compartidos. Los equipos y canales ayudan a organizar conversaciones por proyecto o área; las funciones disponibles varían por organización y licencia.</p>
+                                <ul>
+                                    <li>Usa canales para conversaciones que deben quedar organizadas y chats para intercambios directos.</li>
+                                    <li>Antes de una reunión, define propósito y agenda; durante ella, registra acuerdos, responsables y fechas.</li>
+                                    <li>Comparte archivos desde la ubicación del equipo para trabajar sobre una versión común y evitar copias inconexas.</li>
+                                    <li>Revisa cámara, micrófono, permisos y notificaciones; comparte únicamente la ventana o el contenido necesario.</li>
+                                </ul>
+                            </section>
+                        </div>
+                        <div class="panel-aplicacion" id="panel-onedrive" role="tabpanel" aria-labelledby="pestana-onedrive" hidden>
+                            <section class="bloque-buscable">
+                                <h3>OneDrive: archivos en la nube</h3>
+                                <p>OneDrive permite almacenar, sincronizar y compartir archivos asociados a una cuenta. La sincronización facilita acceder desde varios dispositivos, pero no sustituye por sí sola una estrategia completa de copias de seguridad.</p>
+                                <ul>
+                                    <li>Organiza carpetas con nombres descriptivos y evita mantener copias finales con nombres ambiguos.</li>
+                                    <li>Al compartir, limita el acceso a las personas necesarias y elige permisos de lectura o edición de acuerdo con la tarea.</li>
+                                    <li>Comprueba el estado de sincronización antes de apagar el equipo y conserva copias independientes de la información crítica.</li>
+                                    <li>Usa el historial de versiones para recuperar cambios cuando esté disponible; no almacenes contraseñas en documentos compartidos.</li>
+                                </ul>
+                            </section>
+                        </div>
+                        <div class="panel-aplicacion" id="panel-access" role="tabpanel" aria-labelledby="pestana-access" hidden>
+                            <section class="bloque-buscable">
+                                <h3>Access: bases de datos de escritorio</h3>
+                                <p>Access permite crear bases de datos relacionales para administrar información estructurada en escenarios pequeños o locales. Una tabla guarda registros de un tipo; las consultas seleccionan o resumen datos, y los formularios y reportes facilitan su captura y presentación.</p>
+                                <ul>
+                                    <li>Diseña tablas con campos bien definidos y una clave primaria que identifique cada registro.</li>
+                                    <li>Relaciona tablas mediante claves para reducir duplicados y mantener la consistencia de la información.</li>
+                                    <li>Prueba consultas con copias de los datos antes de ejecutar cambios y limita quién puede modificar la base.</li>
+                                    <li>Evalúa otra plataforma cuando se necesite acceso web, muchos usuarios simultáneos, alta disponibilidad o crecimiento considerable.</li>
+                                </ul>
+                            </section>
+                        </div>
+                    </div>
                     <section class="bloque-buscable">
                         <h3>Buenas prácticas</h3>
                         <p>Usa nombres claros para los archivos, guarda versiones importantes, revisa los permisos antes de compartir y protege las cuentas con contraseñas seguras. En hojas de cálculo, verifica las fórmulas y los datos antes de utilizar los resultados.</p>
@@ -731,21 +1005,45 @@
                         </ul>
                         <p>La frecuencia debe ajustarse al uso, al ambiente y a las recomendaciones del fabricante. Llevar un registro de fechas, síntomas y acciones facilita detectar problemas recurrentes.</p>
                     </section>
+                    <section class="bloque-buscable">
+                        <h3>Diagnóstico ordenado de fallas</h3>
+                        <ol>
+                            <li><strong>Precisar el síntoma:</strong> pregunta qué ocurre, desde cuándo, con qué frecuencia y qué cambios precedieron al problema.</li>
+                            <li><strong>Proteger la información:</strong> si el equipo aún funciona, confirma que los archivos importantes tengan una copia accesible antes de realizar pruebas que puedan afectarlos.</li>
+                            <li><strong>Comprobar lo simple:</strong> revisa conexiones externas, alimentación, mensajes de error y dispositivos conectados, sin desarmar el equipo.</li>
+                            <li><strong>Aislar una variable:</strong> cambia una sola condición a la vez y anota el resultado; así es más fácil identificar qué acción influye en la falla.</li>
+                            <li><strong>Documentar y escalar:</strong> registra pruebas y resultados. Si hay olor a quemado, líquido, batería hinchada, calor extremo o riesgo eléctrico, deja de usar el equipo y solicita soporte técnico.</li>
+                        </ol>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Cuidado según el componente</h3>
+                        <ul>
+                            <li><strong>Ventilación:</strong> no tapes rejillas; coloca el equipo en una superficie firme y deja espacio alrededor para que circule el aire.</li>
+                            <li><strong>Batería:</strong> evita el calor excesivo y utiliza cargadores compatibles. Si notas deformación o hinchazón, no la presiones ni intentes retirarla sin capacitación.</li>
+                            <li><strong>Almacenamiento:</strong> mantén espacio libre para las actualizaciones y conserva copias externas de los datos importantes; una unidad puede fallar sin aviso.</li>
+                            <li><strong>Periféricos:</strong> desconecta cables sujetando el conector, no el cable, y guarda los accesorios protegidos de golpes y humedad.</li>
+                            <li><strong>Electricidad estática:</strong> las intervenciones internas deben seguir el procedimiento del fabricante y usar protección apropiada contra descargas electrostáticas.</li>
+                        </ul>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Registro de mantenimiento</h3>
+                        <p>Una bitácora técnica ayuda a distinguir una falla aislada de un problema recurrente. Registra el identificador del equipo, fecha, síntoma reportado, verificaciones realizadas, resultado, repuestos autorizados y responsable. No incluyas contraseñas ni datos personales que no sean necesarios.</p>
+                    </section>
                     <figure class="diagrama bloque-buscable">
                         <svg viewBox="0 0 620 250" role="img" aria-labelledby="diagrama-pc-titulo">
                             <title id="diagrama-pc-titulo">Partes externas de un computador de escritorio</title>
-                            <rect x="112" y="35" width="270" height="155" rx="12" fill="#163d35"/>
-                            <rect x="126" y="49" width="242" height="126" rx="5" fill="#d5f4e9"/>
-                            <path d="M225 190h46v22h-46z" fill="#163d35"/>
-                            <path d="M202 214h92l16 10H186z" fill="#087f66"/>
-                            <rect x="405" y="74" width="88" height="145" rx="9" fill="#163d35"/>
-                            <circle cx="449" cy="126" r="24" fill="#d5f4e9"/>
-                            <circle cx="449" cy="126" r="12" fill="#80b9a7"/>
+                            <rect x="112" y="35" width="270" height="155" rx="12" fill="#292226"/>
+                            <rect x="126" y="49" width="242" height="126" rx="5" fill="#faedef"/>
+                            <path d="M225 190h46v22h-46z" fill="#292226"/>
+                            <path d="M202 214h92l16 10H186z" fill="#d93b47"/>
+                            <rect x="405" y="74" width="88" height="145" rx="9" fill="#292226"/>
+                            <circle cx="449" cy="126" r="24" fill="#faedef"/>
+                            <circle cx="449" cy="126" r="12" fill="#e98d94"/>
                             <circle cx="449" cy="195" r="5" fill="#f3c969"/>
-                            <path d="M75 73H111M494 108h50M450 219v17" stroke="#087f66" stroke-width="2" stroke-dasharray="5 5"/>
-                            <text x="18" y="67" fill="#18312d" font-size="16" font-family="Arial">Pantalla</text>
-                            <text x="500" y="97" fill="#18312d" font-size="16" font-family="Arial">Ventilación</text>
-                            <text x="405" y="246" fill="#18312d" font-size="16" font-family="Arial">Torre</text>
+                            <path d="M75 73H111M494 108h50M450 219v17" stroke="#d93b47" stroke-width="2" stroke-dasharray="5 5"/>
+                            <text x="18" y="67" fill="#2c2225" font-size="16" font-family="Arial">Pantalla</text>
+                            <text x="500" y="97" fill="#2c2225" font-size="16" font-family="Arial">Ventilación</text>
+                            <text x="405" y="246" fill="#2c2225" font-size="16" font-family="Arial">Torre</text>
                         </svg>
                         <figcaption>Las rejillas de ventilación deben permanecer despejadas. Limpia el exterior con el equipo apagado y desconectado; las reparaciones internas corresponden a personal capacitado.</figcaption>
                     </figure>
@@ -814,6 +1112,54 @@
                         </ol>
                     </section>
                     <section class="bloque-buscable">
+                        <h3>Dimensionamiento: de la necesidad a la capacidad</h3>
+                        <p>Los requisitos deben relacionarse con cargas de trabajo medibles, no con una lista genérica de componentes. Como mínimo, distingue usuarios registrados de usuarios simultáneos y documenta las aplicaciones que más recursos consumen. Confirma los requisitos publicados por cada proveedor antes de comprar.</p>
+                        <div class="tabla-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Recurso</th>
+                                        <th scope="col">Qué estimar</th>
+                                        <th scope="col">Cómo validarlo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Equipos</td>
+                                        <td>Tipo de tarea, aplicaciones abiertas al mismo tiempo, periféricos y vida útil esperada.</td>
+                                        <td>Comparar requisitos recomendados del software y probar tareas representativas.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Red</td>
+                                        <td>Usuarios simultáneos, videollamadas, sincronización y transferencia de archivos.</td>
+                                        <td>Medir cobertura y rendimiento en horas de uso; incluir capacidad para crecimiento y picos.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Almacenamiento</td>
+                                        <td>Datos actuales, aumento esperado, retención, versiones y espacio temporal.</td>
+                                        <td>Proyectar el consumo durante el periodo de planificación y verificar la restauración de copias.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Servicios y soporte</td>
+                                        <td>Disponibilidad requerida, horario de atención, licencias y responsables.</td>
+                                        <td>Definir quién monitorea, resuelve incidentes y autoriza cambios.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p>Deja un margen razonable para actualizaciones, crecimiento y variaciones de uso. El margen no reemplaza las mediciones ni los requisitos del fabricante.</p>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Disponibilidad, respaldo y continuidad</h3>
+                        <ul>
+                            <li>Identifica qué procesos no pueden detenerse y cuánto tiempo de interrupción es aceptable para cada uno.</li>
+                            <li>Define frecuencia, responsable y ubicación de las copias de seguridad; prueba periódicamente que los archivos se puedan restaurar.</li>
+                            <li>Evalúa protección eléctrica y condiciones ambientales de acuerdo con el equipo y la instalación; consulta a personal calificado para cambios eléctricos.</li>
+                            <li>Documenta inventario, garantías, licencias, contactos de soporte y pasos de recuperación accesibles para el personal autorizado.</li>
+                            <li>Incluye accesibilidad, ergonomía, privacidad y eliminación segura de equipos en el plan de infraestructura.</li>
+                        </ul>
+                    </section>
+                    <section class="bloque-buscable">
                         <h3>Ejemplo de una lista de requisitos</h3>
                         <p>La siguiente tabla muestra cómo documentar necesidades para un pequeño espacio de trabajo. Las especificaciones reales deben confirmarse según el software, la cantidad de usuarios y el presupuesto.</p>
                         <div class="tabla-scroll">
@@ -853,17 +1199,17 @@
                     <figure class="diagrama bloque-buscable">
                         <svg viewBox="0 0 620 250" role="img" aria-labelledby="diagrama-red-titulo">
                             <title id="diagrama-red-titulo">Diagrama de una red de oficina básica</title>
-                            <rect x="30" y="88" width="118" height="68" rx="12" fill="#d5f4e9" stroke="#087f66" stroke-width="3"/>
-                            <text x="53" y="128" fill="#18312d" font-size="17" font-family="Arial">Internet</text>
-                            <rect x="240" y="88" width="140" height="68" rx="12" fill="#087f66"/>
+                            <rect x="30" y="88" width="118" height="68" rx="12" fill="#faedef" stroke="#d93b47" stroke-width="3"/>
+                            <text x="53" y="128" fill="#2c2225" font-size="17" font-family="Arial">Internet</text>
+                            <rect x="240" y="88" width="140" height="68" rx="12" fill="#d93b47"/>
                             <text x="265" y="128" fill="white" font-size="17" font-family="Arial">Router / Wi-Fi</text>
-                            <rect x="474" y="28" width="116" height="58" rx="10" fill="#d5f4e9" stroke="#087f66" stroke-width="3"/>
-                            <text x="495" y="64" fill="#18312d" font-size="16" font-family="Arial">Computador</text>
-                            <rect x="474" y="100" width="116" height="58" rx="10" fill="#d5f4e9" stroke="#087f66" stroke-width="3"/>
-                            <text x="502" y="136" fill="#18312d" font-size="16" font-family="Arial">Impresora</text>
-                            <rect x="474" y="172" width="116" height="58" rx="10" fill="#d5f4e9" stroke="#087f66" stroke-width="3"/>
-                            <text x="495" y="208" fill="#18312d" font-size="16" font-family="Arial">Portátil</text>
-                            <path d="M148 122h92M380 122h50M430 57v144M430 57h44M430 129h44M430 201h44" fill="none" stroke="#087f66" stroke-width="4"/>
+                            <rect x="474" y="28" width="116" height="58" rx="10" fill="#faedef" stroke="#d93b47" stroke-width="3"/>
+                            <text x="495" y="64" fill="#2c2225" font-size="16" font-family="Arial">Computador</text>
+                            <rect x="474" y="100" width="116" height="58" rx="10" fill="#faedef" stroke="#d93b47" stroke-width="3"/>
+                            <text x="502" y="136" fill="#2c2225" font-size="16" font-family="Arial">Impresora</text>
+                            <rect x="474" y="172" width="116" height="58" rx="10" fill="#faedef" stroke="#d93b47" stroke-width="3"/>
+                            <text x="495" y="208" fill="#2c2225" font-size="16" font-family="Arial">Portátil</text>
+                            <path d="M148 122h92M380 122h50M430 57v144M430 57h44M430 129h44M430 201h44" fill="none" stroke="#d93b47" stroke-width="4"/>
                             <circle cx="430" cy="122" r="7" fill="#f3c969"/>
                         </svg>
                         <figcaption>Ejemplo conceptual: el router conecta los equipos y servicios de la oficina. La capacidad y seguridad de la red deben definirse según la cantidad de usuarios y las aplicaciones.</figcaption>
@@ -913,6 +1259,27 @@
                             <li><strong>Aplicaciones:</strong> instalar únicamente programas autorizados y verificar que abran y funcionen correctamente.</li>
                             <li><strong>Seguridad:</strong> usar cuentas individuales, permisos adecuados, bloqueo de pantalla y protección actualizada.</li>
                             <li><strong>Pruebas y entrega:</strong> comprobar audio, cámara, periféricos, conexión y aplicaciones; explicar al usuario las funciones básicas.</li>
+                        </ul>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Configuración estándar e inventario</h3>
+                        <p>En una organización, una configuración estándar o línea base permite preparar equipos de forma coherente y facilita el soporte. Antes de aplicar cambios, registra el identificador del equipo, su modelo, sistema operativo, estado de garantía y usuario responsable.</p>
+                        <ul>
+                            <li>Define qué sistema, actualizaciones, aplicaciones y ajustes son necesarios para cada perfil de trabajo.</li>
+                            <li>Usa instaladores y controladores obtenidos de fuentes oficiales; comprueba modelo, arquitectura y compatibilidad.</li>
+                            <li>Separa los datos del usuario de los archivos temporales de instalación y respeta las políticas de licencias.</li>
+                            <li>Documenta excepciones aprobadas y conserva una forma de volver a la configuración anterior cuando sea posible.</li>
+                        </ul>
+                    </section>
+                    <section class="bloque-buscable">
+                        <h3>Validación después de configurar</h3>
+                        <p>Una instalación correcta no se confirma solo porque el equipo encienda. Comprueba el resultado desde la perspectiva del usuario y registra qué se probó.</p>
+                        <ul>
+                            <li>Reinicia y verifica que el sistema complete su inicio sin alertas pendientes ni actualizaciones interrumpidas.</li>
+                            <li>Prueba una tarea real en cada aplicación prioritaria y confirma que los archivos se abren en el formato esperado.</li>
+                            <li>Comprueba red, impresión y periféricos con los permisos autorizados; no uses cuentas compartidas para hacer las pruebas.</li>
+                            <li>Confirma que las copias y la sincronización funcionen según la política, y explica al usuario dónde guardar la información.</li>
+                            <li>Registra fecha, responsable, versión del sistema, aplicaciones instaladas y resultados, sin anotar contraseñas.</li>
                         </ul>
                     </section>
                     <section class="bloque-buscable">
@@ -969,6 +1336,26 @@
         const enlacesMenu = document.querySelectorAll(".opciones a[data-pagina]");
         const menu = document.querySelector(".menu");
         const controlTema = document.getElementById("control-tema");
+        const fechaHora = document.getElementById("fecha-hora");
+        const formatoFecha = new Intl.DateTimeFormat("es-CO", {
+            weekday: "short",
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        });
+        const formatoHora = new Intl.DateTimeFormat("es-CO", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        });
+
+        function actualizarFechaHora() {
+            const ahora = new Date();
+            fechaHora.textContent = formatoFecha.format(ahora) + " · " + formatoHora.format(ahora);
+        }
+
+        actualizarFechaHora();
+        window.setInterval(actualizarFechaHora, 30000);
 
         function normalizar(texto) {
             return texto
@@ -1002,6 +1389,52 @@
             mostrarPagina(window.location.hash.slice(1) || "inicio");
         }
 
+        function activarPestanaOffice(pestana, enfocar) {
+            const listaPestanas = pestana.closest('[role="tablist"]');
+            const pagina = pestana.closest(".pagina");
+
+            listaPestanas.querySelectorAll('[role="tab"]').forEach(function (otraPestana) {
+                const activa = otraPestana === pestana;
+                otraPestana.setAttribute("aria-selected", String(activa));
+                otraPestana.tabIndex = activa ? 0 : -1;
+            });
+
+            pagina.querySelectorAll(".panel-aplicacion").forEach(function (panel) {
+                panel.hidden = panel.id !== pestana.getAttribute("aria-controls");
+            });
+
+            if (enfocar) {
+                pestana.focus();
+            }
+        }
+
+        document.querySelectorAll(".pestana-office").forEach(function (pestana) {
+            pestana.addEventListener("click", function () {
+                activarPestanaOffice(pestana, false);
+            });
+
+            pestana.addEventListener("keydown", function (evento) {
+                const pestanas = Array.from(pestana.closest('[role="tablist"]').querySelectorAll('[role="tab"]'));
+                const indice = pestanas.indexOf(pestana);
+                let siguienteIndice = indice;
+
+                if (evento.key === "ArrowRight") {
+                    siguienteIndice = (indice + 1) % pestanas.length;
+                } else if (evento.key === "ArrowLeft") {
+                    siguienteIndice = (indice - 1 + pestanas.length) % pestanas.length;
+                } else if (evento.key === "Home") {
+                    siguienteIndice = 0;
+                } else if (evento.key === "End") {
+                    siguienteIndice = pestanas.length - 1;
+                } else {
+                    return;
+                }
+
+                evento.preventDefault();
+                activarPestanaOffice(pestanas[siguienteIndice], true);
+            });
+        });
+
         document.querySelectorAll(".buscador-seccion").forEach(function (buscador) {
             const pagina = buscador.closest(".pagina");
             const bloques = pagina.querySelectorAll(".bloque-buscable");
@@ -1020,6 +1453,21 @@
                         coincidencias++;
                     }
                 });
+
+                if (palabraClave !== "") {
+                    const primerBloqueEncontrado = Array.from(bloques).find(function (bloque) {
+                        return !bloque.hidden && bloque.closest(".panel-aplicacion");
+                    });
+
+                    if (primerBloqueEncontrado) {
+                        const panel = primerBloqueEncontrado.closest(".panel-aplicacion");
+                        const pestana = pagina.querySelector('.pestana-office[aria-controls="' + panel.id + '"]');
+
+                        if (pestana) {
+                            activarPestanaOffice(pestana, false);
+                        }
+                    }
+                }
 
                 if (palabraClave === "") {
                     estado.textContent = "Escribe una palabra para buscar en este tema.";
@@ -1061,6 +1509,108 @@
                 }
             });
         });
+    </script>
+    <script type="module">
+        const estadoContador = document.getElementById("estado-contador");
+        const visitantesConectados = document.getElementById("visitantes-conectados");
+        const visitasAcumuladas = document.getElementById("visitas-acumuladas");
+        const firebaseConfig = {
+            apiKey: "AIzaSyCgWkGt-R4I4VehudXenq3Bb69oF7coGJY",
+            authDomain: "competencias-7f468.firebaseapp.com",
+            databaseURL: "https://competencias-7f468-default-rtdb.firebaseio.com",
+            projectId: "competencias-7f468",
+            appId: "1:440272469091:web:01e29888e61f5fe3c7cc56"
+        };
+        const configuracionLista = Object.values(firebaseConfig).every(function (valor) {
+            return valor.trim() !== "" && !valor.includes("PEGA_AQUI");
+        });
+
+        function mostrarErrorContador(mensaje, error) {
+            console.error("Error en el contador de visitantes:", error);
+            estadoContador.textContent = mensaje;
+        }
+
+        if (!configuracionLista) {
+            estadoContador.textContent = "Falta conectar el contador con tu proyecto de Firebase.";
+        } else {
+            try {
+                const [appSdk, authSdk, databaseSdk] = await Promise.all([
+                    import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js"),
+                    import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js"),
+                    import("https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js")
+                ]);
+                const app = appSdk.initializeApp(firebaseConfig);
+                const auth = authSdk.getAuth(app);
+                const database = databaseSdk.getDatabase(app);
+                const sesion = await authSdk.signInAnonymously(auth);
+                const referenciaSesion = databaseSdk.push(
+                    databaseSdk.ref(database, "presence/" + sesion.user.uid)
+                );
+
+                databaseSdk.onValue(
+                    databaseSdk.ref(database, "presence"),
+                    function (snapshot) {
+                        let cantidad = 0;
+                        snapshot.forEach(function (usuario) {
+                            cantidad += usuario.numChildren();
+                        });
+                        visitantesConectados.textContent = new Intl.NumberFormat("es-CO").format(cantidad);
+                    },
+                    function (error) {
+                        mostrarErrorContador("No se pudo leer la presencia; revisa las reglas de Firebase.", error);
+                    }
+                );
+
+                databaseSdk.onValue(
+                    databaseSdk.ref(database, ".info/connected"),
+                    async function (snapshot) {
+                        if (snapshot.val() !== true) {
+                            visitantesConectados.textContent = "—";
+                            estadoContador.textContent = "Conectando con Firebase…";
+                            return;
+                        }
+
+                        try {
+                            await databaseSdk.onDisconnect(referenciaSesion).remove();
+                            await databaseSdk.set(referenciaSesion, true);
+                            estadoContador.textContent = "Contador conectado en tiempo real.";
+                        } catch (error) {
+                            mostrarErrorContador("No se pudo registrar la conexión; revisa las reglas de presencia.", error);
+                        }
+                    },
+                    function (error) {
+                        mostrarErrorContador("No se pudo comprobar la conexión con Firebase.", error);
+                    }
+                );
+
+                const referenciaVisitas = databaseSdk.ref(database, "stats/visits");
+                databaseSdk.onValue(
+                    referenciaVisitas,
+                    function (snapshot) {
+                        const total = snapshot.val();
+                        visitasAcumuladas.textContent = new Intl.NumberFormat("es-CO").format(
+                            typeof total === "number" ? total : 0
+                        );
+                    },
+                    function (error) {
+                        mostrarErrorContador("No se pudo leer el total; revisa las reglas de Firebase.", error);
+                    }
+                );
+
+                const resultadoVisita = await databaseSdk.runTransaction(referenciaVisitas, function (total) {
+                    return (typeof total === "number" ? total : 0) + 1;
+                });
+
+                if (!resultadoVisita.committed) {
+                    throw new Error("Firebase no confirmó el registro de esta visita.");
+                }
+            } catch (error) {
+                mostrarErrorContador(
+                    "No se pudo conectar. Verifica la configuración, la autenticación y las reglas de Firebase.",
+                    error
+                );
+            }
+        }
     </script>
 </body>
 </html>
