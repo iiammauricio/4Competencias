@@ -521,6 +521,189 @@
             text-align: center;
         }
 
+        .rompecabezas-red {
+            margin: 22px 0;
+            padding: 18px;
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            background: var(--suave);
+        }
+
+        .rompecabezas-red h3 {
+            margin: 0 0 8px;
+            color: var(--acento-oscuro);
+        }
+
+        .tablero-red {
+            position: relative;
+            isolation: isolate;
+            display: grid;
+            grid-template-areas:
+                ". . computador"
+                "internet router impresora"
+                ". . portatil";
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-rows: repeat(3, minmax(84px, auto));
+            gap: 12px;
+            margin: 18px 0;
+            padding: 18px;
+            overflow: hidden;
+            border-radius: 12px;
+            background: var(--superficie);
+        }
+
+        .conexiones-red {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .zona-rompecabezas {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 10px;
+            border: 2px dashed var(--acento);
+            border-radius: 12px;
+            background: var(--superficie);
+            color: var(--texto);
+            font: inherit;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .zona-rompecabezas:hover,
+        .zona-rompecabezas:focus-visible,
+        .zona-rompecabezas.arrastre-activo {
+            outline: 3px solid var(--acento);
+            outline-offset: 2px;
+        }
+
+        .zona-rompecabezas.ocupada {
+            border-style: solid;
+            background: var(--suave);
+        }
+
+        .zona-rompecabezas.evaluada-correcta {
+            border-color: #347a43;
+            box-shadow: inset 0 0 0 1px #347a43;
+        }
+
+        .zona-rompecabezas.evaluada-incorrecta {
+            border-color: var(--acento-oscuro);
+            box-shadow: inset 0 0 0 1px var(--acento-oscuro);
+        }
+
+        .zona-rompecabezas[data-zona="internet"] {
+            grid-area: internet;
+        }
+
+        .zona-rompecabezas[data-zona="router"] {
+            grid-area: router;
+        }
+
+        .zona-rompecabezas[data-zona="computador"] {
+            grid-area: computador;
+        }
+
+        .zona-rompecabezas[data-zona="impresora"] {
+            grid-area: impresora;
+        }
+
+        .zona-rompecabezas[data-zona="portatil"] {
+            grid-area: portatil;
+        }
+
+        .etiqueta-zona {
+            color: var(--acento-oscuro);
+            font-weight: bold;
+        }
+
+        .ocupacion-zona {
+            font-size: 0.88rem;
+        }
+
+        .bandeja-piezas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0 18px;
+        }
+
+        .pieza-rompecabezas {
+            padding: 10px 14px;
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            background: var(--superficie);
+            color: var(--texto);
+            font: inherit;
+            font-weight: bold;
+            cursor: grab;
+        }
+
+        .pieza-rompecabezas[aria-pressed="true"] {
+            border-color: var(--acento-oscuro);
+            background: var(--acento-oscuro);
+            color: #ffffff;
+        }
+
+        .pieza-rompecabezas[hidden] {
+            display: none;
+        }
+
+        .pieza-rompecabezas:focus-visible,
+        .acciones-rompecabezas button:focus-visible {
+            outline: 3px solid var(--acento);
+            outline-offset: 2px;
+        }
+
+        .info-rompecabezas {
+            min-height: 3em;
+            margin: 12px 0;
+            padding: 12px;
+            border-left: 4px solid var(--acento);
+            border-radius: 6px;
+            background: var(--superficie);
+        }
+
+        .acciones-rompecabezas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .acciones-rompecabezas button {
+            padding: 9px 14px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--acento-oscuro);
+            color: #ffffff;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .resultado-rompecabezas {
+            margin-top: 14px;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--superficie);
+        }
+
+        .resultado-rompecabezas:empty {
+            display: none;
+        }
+
+        .detalle-evaluacion li + li {
+            margin-top: 8px;
+        }
+
         .explorador-equipos {
             margin: 22px 0;
             padding: 18px;
@@ -774,6 +957,20 @@
 
             .opciones a {
                 font-size: 0.85rem;
+            }
+
+            .tablero-red {
+                grid-template-areas:
+                    "internet router"
+                    "computador impresora"
+                    "portatil portatil";
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-rows: repeat(3, minmax(76px, auto));
+                padding: 12px;
+            }
+
+            .conexiones-red {
+                display: none;
             }
         }
 
@@ -1450,24 +1647,54 @@
                             </table>
                         </div>
                     </section>
-                    <figure class="diagrama bloque-buscable">
-                        <svg viewBox="0 0 620 250" role="img" aria-labelledby="diagrama-red-titulo">
-                            <title id="diagrama-red-titulo">Diagrama de una red de oficina básica</title>
-                            <rect x="30" y="88" width="118" height="68" rx="12" fill="#faedef" stroke="#d93b47" stroke-width="3"/>
-                            <text x="53" y="128" fill="#2c2225" font-size="17" font-family="Arial">Internet</text>
-                            <rect x="240" y="88" width="140" height="68" rx="12" fill="#d93b47"/>
-                            <text x="265" y="128" fill="white" font-size="17" font-family="Arial">Router / Wi-Fi</text>
-                            <rect x="474" y="28" width="116" height="58" rx="10" fill="#faedef" stroke="#d93b47" stroke-width="3"/>
-                            <text x="495" y="64" fill="#2c2225" font-size="16" font-family="Arial">Computador</text>
-                            <rect x="474" y="100" width="116" height="58" rx="10" fill="#faedef" stroke="#d93b47" stroke-width="3"/>
-                            <text x="502" y="136" fill="#2c2225" font-size="16" font-family="Arial">Impresora</text>
-                            <rect x="474" y="172" width="116" height="58" rx="10" fill="#faedef" stroke="#d93b47" stroke-width="3"/>
-                            <text x="495" y="208" fill="#2c2225" font-size="16" font-family="Arial">Portátil</text>
-                            <path d="M148 122h92M380 122h50M430 57v144M430 57h44M430 129h44M430 201h44" fill="none" stroke="#d93b47" stroke-width="4"/>
-                            <circle cx="430" cy="122" r="7" fill="#f3c969"/>
-                        </svg>
-                        <figcaption>Ejemplo conceptual: el router conecta los equipos y servicios de la oficina. La capacidad y seguridad de la red deben definirse según la cantidad de usuarios y las aplicaciones.</figcaption>
-                    </figure>
+                    <section class="rompecabezas-red bloque-buscable" aria-labelledby="titulo-rompecabezas-red">
+                        <h3 id="titulo-rompecabezas-red">Arma el diagrama de la red</h3>
+                        <p>Arrastra cada pieza a un espacio del tablero, o selecciónala con un clic y luego elige el espacio. Puedes mover una pieza colocada haciendo clic en su espacio.</p>
+                        <p id="estado-rompecabezas" role="status" aria-live="polite">Organiza la conexión desde Internet, pasando por el router, hasta los equipos.</p>
+                        <div class="tablero-red" aria-label="Tablero del rompecabezas de red">
+                            <svg class="conexiones-red" viewBox="0 0 640 270" aria-hidden="true" focusable="false">
+                                <path d="M183 135h52m170 0h20m0-90v180m0-180h30m-30 90h30m-30 90h30" fill="none" stroke="var(--acento)" stroke-width="4" stroke-linecap="round"/>
+                                <circle cx="425" cy="135" r="7" fill="var(--acento)"/>
+                            </svg>
+                            <button type="button" class="zona-rompecabezas" data-zona="internet" data-etiqueta="Punto de entrada">
+                                <span class="etiqueta-zona">Punto de entrada</span>
+                                <span class="ocupacion-zona">Arrastra o elige una pieza</span>
+                            </button>
+                            <button type="button" class="zona-rompecabezas" data-zona="router" data-etiqueta="Nodo central">
+                                <span class="etiqueta-zona">Nodo central</span>
+                                <span class="ocupacion-zona">Arrastra o elige una pieza</span>
+                            </button>
+                            <button type="button" class="zona-rompecabezas" data-zona="computador" data-etiqueta="Equipo destino 1">
+                                <span class="etiqueta-zona">Equipo destino 1</span>
+                                <span class="ocupacion-zona">Arrastra o elige una pieza</span>
+                            </button>
+                            <button type="button" class="zona-rompecabezas" data-zona="impresora" data-etiqueta="Equipo destino 2">
+                                <span class="etiqueta-zona">Equipo destino 2</span>
+                                <span class="ocupacion-zona">Arrastra o elige una pieza</span>
+                            </button>
+                            <button type="button" class="zona-rompecabezas" data-zona="portatil" data-etiqueta="Equipo destino 3">
+                                <span class="etiqueta-zona">Equipo destino 3</span>
+                                <span class="ocupacion-zona">Arrastra o elige una pieza</span>
+                            </button>
+                        </div>
+                        <h4>Piezas disponibles</h4>
+                        <div class="bandeja-piezas" aria-label="Piezas del rompecabezas">
+                            <button type="button" class="pieza-rompecabezas" draggable="true" data-pieza="impresora" data-destino="Equipo destino 2" data-informacion="La impresora es un periférico que recibe trabajos de los equipos y produce copias en papel. Puede conectarse por cable o por la red; su disponibilidad depende de la conexión, los controladores y los permisos configurados.">Impresora</button>
+                            <button type="button" class="pieza-rompecabezas" draggable="true" data-pieza="portatil" data-destino="Equipo destino 3" data-informacion="El portátil es un equipo de usuario que puede conectarse a la red por Wi-Fi o por cable, según sus puertos y adaptadores. La cobertura, la autenticación y las políticas de acceso determinan los servicios disponibles.">Portátil</button>
+                            <button type="button" class="pieza-rompecabezas" draggable="true" data-pieza="computador" data-destino="Equipo destino 1" data-informacion="El computador es un equipo final que utiliza servicios de la red, como Internet, archivos compartidos o aplicaciones. Puede conectarse al router de forma cableada o inalámbrica.">Computador</button>
+                            <button type="button" class="pieza-rompecabezas" draggable="true" data-pieza="router" data-destino="Nodo central" data-informacion="El router dirige el tráfico entre redes y, en muchos hogares u oficinas, también proporciona Wi-Fi y conecta los dispositivos de la red local. Debe configurarse con seguridad y capacidad adecuadas para sus usuarios.">Router / Wi-Fi</button>
+                            <button type="button" class="pieza-rompecabezas" draggable="true" data-pieza="internet" data-destino="Punto de entrada" data-informacion="Internet es la red externa a la oficina que ofrece acceso a servicios en línea. El proveedor entrega la conexión; el router permite compartirla con los dispositivos autorizados de la red local.">Internet</button>
+                        </div>
+                        <p id="informacion-pieza-red" class="info-rompecabezas" role="status" aria-live="polite">Selecciona una pieza para conocer su función en el diagrama.</p>
+                        <div class="acciones-rompecabezas">
+                            <button type="button" id="evaluar-rompecabezas-red">Evaluar ubicaciones</button>
+                            <button type="button" id="reiniciar-rompecabezas-red">Reiniciar rompecabezas</button>
+                        </div>
+                        <div class="resultado-rompecabezas" aria-live="polite">
+                            <p id="resumen-rompecabezas-red"></p>
+                            <ul id="detalle-evaluacion-red" class="detalle-evaluacion"></ul>
+                        </div>
+                    </section>
                     <section class="quiz" aria-labelledby="quiz-infraestructura">
                         <h3 id="quiz-infraestructura">Comprueba lo aprendido</h3>
                         <form class="cuestionario" data-respuestas="c,b,a,c,b">
@@ -1787,6 +2014,213 @@
                 }
             });
         });
+
+        const rompecabezasRed = document.querySelector(".rompecabezas-red");
+        if (rompecabezasRed) {
+            const piezasRed = Array.from(rompecabezasRed.querySelectorAll(".pieza-rompecabezas"));
+            const zonasRed = Array.from(rompecabezasRed.querySelectorAll(".zona-rompecabezas"));
+            const estadoRompecabezas = rompecabezasRed.querySelector("#estado-rompecabezas");
+            const informacionPieza = rompecabezasRed.querySelector("#informacion-pieza-red");
+            const resumenRompecabezas = rompecabezasRed.querySelector("#resumen-rompecabezas-red");
+            const detalleEvaluacion = rompecabezasRed.querySelector("#detalle-evaluacion-red");
+            const ubicaciones = Object.create(null);
+            let piezaSeleccionada = null;
+
+            function limpiarEvaluacion() {
+                resumenRompecabezas.textContent = "";
+                detalleEvaluacion.replaceChildren();
+                zonasRed.forEach(function (zona) {
+                    zona.classList.remove("evaluada-correcta", "evaluada-incorrecta");
+                });
+            }
+
+            function actualizarTablero() {
+                piezasRed.forEach(function (pieza) {
+                    pieza.hidden = Object.values(ubicaciones).includes(pieza.dataset.pieza);
+                    pieza.setAttribute("aria-pressed", String(pieza.dataset.pieza === piezaSeleccionada));
+                });
+
+                zonasRed.forEach(function (zona) {
+                    const piezaEnZona = Object.keys(ubicaciones).find(function (idPieza) {
+                        return ubicaciones[idPieza] === zona.dataset.zona;
+                    });
+                    const nombrePieza = piezasRed.find(function (pieza) {
+                        return pieza.dataset.pieza === piezaEnZona;
+                    });
+
+                    zona.querySelector(".ocupacion-zona").textContent = nombrePieza
+                        ? nombrePieza.textContent.trim()
+                        : "Arrastra o elige una pieza";
+                    zona.classList.toggle("ocupada", Boolean(nombrePieza));
+                    zona.setAttribute(
+                        "aria-label",
+                        zona.dataset.etiqueta + (nombrePieza
+                            ? ": contiene " + nombrePieza.textContent.trim()
+                            : ": espacio vacío")
+                    );
+                });
+            }
+
+            function mostrarInformacion(pieza) {
+                informacionPieza.textContent = pieza.textContent.trim() + ": " + pieza.dataset.informacion;
+            }
+
+            function colocarPieza(idPieza, idZona) {
+                const pieza = piezasRed.find(function (elemento) {
+                    return elemento.dataset.pieza === idPieza;
+                });
+
+                if (!pieza || !zonasRed.some(function (zona) { return zona.dataset.zona === idZona; })) {
+                    return;
+                }
+
+                Object.keys(ubicaciones).forEach(function (zona) {
+                    if (ubicaciones[zona] === idPieza) {
+                        delete ubicaciones[zona];
+                    }
+                });
+
+                Object.keys(ubicaciones).forEach(function (zona) {
+                    if (zona === idZona) {
+                        delete ubicaciones[zona];
+                    }
+                });
+
+                ubicaciones[idZona] = idPieza;
+                piezaSeleccionada = null;
+                limpiarEvaluacion();
+                actualizarTablero();
+                const zonaDestino = zonasRed.find(function (zona) {
+                    return zona.dataset.zona === idZona;
+                });
+                estadoRompecabezas.textContent = "Colocaste " + pieza.textContent.trim() + " en "
+                    + zonaDestino.dataset.etiqueta + ".";
+                mostrarInformacion(pieza);
+            }
+
+            piezasRed.forEach(function (pieza) {
+                pieza.addEventListener("click", function () {
+                    piezaSeleccionada = piezaSeleccionada === pieza.dataset.pieza ? null : pieza.dataset.pieza;
+                    limpiarEvaluacion();
+                    actualizarTablero();
+
+                    if (piezaSeleccionada) {
+                        estadoRompecabezas.textContent = "Seleccionaste " + pieza.textContent.trim()
+                            + ". Ahora elige una zona del tablero.";
+                        mostrarInformacion(pieza);
+                    } else {
+                        estadoRompecabezas.textContent = "Selección cancelada. Elige una pieza para continuar.";
+                    }
+                });
+
+                pieza.addEventListener("dragstart", function (evento) {
+                    piezaSeleccionada = pieza.dataset.pieza;
+                    evento.dataTransfer.setData("text/plain", pieza.dataset.pieza);
+                    evento.dataTransfer.effectAllowed = "move";
+                    actualizarTablero();
+                    mostrarInformacion(pieza);
+                });
+            });
+
+            zonasRed.forEach(function (zona) {
+                zona.addEventListener("click", function () {
+                    if (piezaSeleccionada) {
+                        colocarPieza(piezaSeleccionada, zona.dataset.zona);
+                        return;
+                    }
+
+                    const idPieza = ubicaciones[zona.dataset.zona];
+                    const pieza = piezasRed.find(function (elemento) {
+                        return elemento.dataset.pieza === idPieza;
+                    });
+
+                    if (pieza) {
+                        delete ubicaciones[zona.dataset.zona];
+                        piezaSeleccionada = idPieza;
+                        limpiarEvaluacion();
+                        actualizarTablero();
+                        estadoRompecabezas.textContent = "Seleccionaste " + pieza.textContent.trim()
+                            + ". Elige otra zona para moverla.";
+                        mostrarInformacion(pieza);
+                    } else {
+                        estadoRompecabezas.textContent = "Selecciona una pieza y luego elige dónde ubicarla.";
+                    }
+                });
+
+                zona.addEventListener("dragover", function (evento) {
+                    evento.preventDefault();
+                    zona.classList.add("arrastre-activo");
+                    evento.dataTransfer.dropEffect = "move";
+                });
+
+                zona.addEventListener("dragleave", function () {
+                    zona.classList.remove("arrastre-activo");
+                });
+
+                zona.addEventListener("drop", function (evento) {
+                    evento.preventDefault();
+                    zona.classList.remove("arrastre-activo");
+                    colocarPieza(evento.dataTransfer.getData("text/plain"), zona.dataset.zona);
+                });
+            });
+
+            rompecabezasRed.querySelector("#evaluar-rompecabezas-red").addEventListener("click", function () {
+                let correctas = 0;
+                let malUbicadas = 0;
+                let sinUbicar = 0;
+                detalleEvaluacion.replaceChildren();
+
+                piezasRed.forEach(function (pieza) {
+                    const idZona = Object.keys(ubicaciones).find(function (zona) {
+                        return ubicaciones[zona] === pieza.dataset.pieza;
+                    });
+                    const elemento = document.createElement("li");
+
+                    if (!idZona) {
+                        sinUbicar++;
+                        elemento.textContent = pieza.textContent.trim() + ": sin ubicar; colócala en "
+                            + pieza.dataset.destino + ". " + pieza.dataset.informacion;
+                    } else if (idZona === pieza.dataset.pieza) {
+                        correctas++;
+                        elemento.textContent = pieza.textContent.trim() + ": bien ubicada en "
+                            + pieza.dataset.destino + ". " + pieza.dataset.informacion;
+                    } else {
+                        malUbicadas++;
+                        const zonaActual = zonasRed.find(function (zona) {
+                            return zona.dataset.zona === idZona;
+                        });
+                        elemento.textContent = pieza.textContent.trim() + ": mal ubicada en "
+                            + zonaActual.dataset.etiqueta + "; debería ir en " + pieza.dataset.destino
+                            + ". " + pieza.dataset.informacion;
+                    }
+
+                    detalleEvaluacion.appendChild(elemento);
+                });
+
+                zonasRed.forEach(function (zona) {
+                    const idPieza = ubicaciones[zona.dataset.zona];
+                    zona.classList.toggle("evaluada-correcta", Boolean(idPieza) && idPieza === zona.dataset.zona);
+                    zona.classList.toggle("evaluada-incorrecta", Boolean(idPieza) && idPieza !== zona.dataset.zona);
+                });
+
+                resumenRompecabezas.textContent = "Bien ubicadas: " + correctas + " de " + piezasRed.length
+                    + ". Mal ubicadas: " + malUbicadas + ". Sin ubicar: " + sinUbicar + ".";
+                estadoRompecabezas.textContent = "Evaluación completada. Revisa el resultado y la información de cada pieza.";
+            });
+
+            rompecabezasRed.querySelector("#reiniciar-rompecabezas-red").addEventListener("click", function () {
+                Object.keys(ubicaciones).forEach(function (zona) {
+                    delete ubicaciones[zona];
+                });
+                piezaSeleccionada = null;
+                limpiarEvaluacion();
+                actualizarTablero();
+                estadoRompecabezas.textContent = "Rompecabezas reiniciado. Organiza la conexión desde Internet, pasando por el router, hasta los equipos.";
+                informacionPieza.textContent = "Selecciona una pieza para conocer su función en el diagrama.";
+            });
+
+            actualizarTablero();
+        }
 
         document.querySelectorAll(".buscador-seccion").forEach(function (buscador) {
             const pagina = buscador.closest(".pagina");
