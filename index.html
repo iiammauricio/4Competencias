@@ -590,6 +590,11 @@
             background: var(--suave);
         }
 
+        .zona-rompecabezas.pieza-seleccionada {
+            outline: 3px solid var(--acento);
+            outline-offset: 3px;
+        }
+
         .zona-rompecabezas.evaluada-correcta {
             border-color: #347a43;
             box-shadow: inset 0 0 0 1px #347a43;
@@ -715,6 +720,430 @@
         .explorador-equipos h3 {
             margin: 0 0 8px;
             color: var(--acento-oscuro);
+        }
+
+        .laboratorio-simuladores,
+        .casilla-opiniones {
+            margin: 22px 0;
+            padding: 18px;
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            background: var(--suave);
+        }
+
+        .casilla-opiniones {
+            width: min(100% - 32px, 1000px);
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .laboratorio-simuladores h3,
+        .casilla-opiniones h2 {
+            margin: 0 0 8px;
+            color: var(--acento-oscuro);
+        }
+
+        .laboratorio-simuladores {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .pagina-simuladores .temas {
+            grid-template-columns: 1fr;
+        }
+
+        .pagina-simuladores article {
+            max-width: 940px;
+            margin: 0 auto;
+        }
+
+        .selector-simulador {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 14px 0;
+        }
+
+        .selector-simulador button,
+        .acciones-simulador button,
+        .formulario-opiniones button {
+            padding: 9px 13px;
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            background: var(--superficie);
+            color: var(--texto);
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .selector-simulador button[aria-pressed="true"],
+        .acciones-simulador button,
+        .formulario-opiniones button {
+            border-color: var(--acento-oscuro);
+            background: var(--acento-oscuro);
+            color: #ffffff;
+        }
+
+        .selector-simulador button:focus-visible,
+        .acciones-simulador button:focus-visible,
+        .pieza-simulador:focus-visible,
+        .formulario-opiniones button:focus-visible,
+        .formulario-opiniones textarea:focus-visible {
+            outline: 3px solid var(--acento);
+            outline-offset: 2px;
+        }
+
+        .vista-simulador {
+            position: relative;
+            height: 420px;
+            margin: 14px 0;
+            overflow: hidden;
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            perspective: 1200px;
+            touch-action: none;
+            cursor: grab;
+            background:
+                radial-gradient(ellipse at 50% 55%, rgba(223, 63, 75, 0.14), transparent 60%),
+                linear-gradient(rgba(138, 126, 131, 0.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(138, 126, 131, 0.12) 1px, transparent 1px),
+                var(--superficie);
+            background-size: auto, 28px 28px, 28px 28px, auto;
+            box-shadow: inset 0 0 0 1px var(--borde);
+        }
+
+        .vista-simulador:active {
+            cursor: grabbing;
+        }
+
+        .escena-rotativa {
+            position: absolute;
+            inset: 0;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        .contexto-equipo {
+            position: absolute;
+            top: 4px;
+            right: 0;
+            left: 0;
+            display: grid;
+            height: 48%;
+            place-items: center;
+            transform: translateZ(-35px);
+            transform-style: preserve-3d;
+        }
+
+        .ilustracion-simulador {
+            display: block;
+            width: min(85%, 360px);
+            height: 180px;
+            margin: auto;
+            filter: drop-shadow(14px 18px 10px rgba(41, 38, 42, 0.22));
+        }
+
+        .ilustracion-simulador[hidden] {
+            display: none;
+        }
+
+        .modelo-explotado .contexto-equipo {
+            opacity: 0.3;
+            filter: grayscale(0.7);
+        }
+
+        .escena-piezas {
+            position: absolute;
+            top: 42%;
+            right: 8px;
+            bottom: 8px;
+            left: 8px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+            align-content: center;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid rgba(138, 126, 131, 0.28);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateZ(10px);
+            transform-style: preserve-3d;
+        }
+
+        .pieza-vista-3d {
+            display: grid;
+            min-width: 0;
+            min-height: 106px;
+            align-content: center;
+            justify-items: center;
+            padding: 8px 5px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.82);
+            color: #292226;
+            font: inherit;
+            text-align: center;
+            cursor: pointer;
+            transform: translateZ(0);
+            transform-style: preserve-3d;
+            transition: transform 180ms ease, opacity 180ms ease, box-shadow 180ms ease;
+        }
+
+        .pieza-vista-3d:hover,
+        .pieza-vista-3d:focus-visible {
+            z-index: 1;
+            outline: 2px solid var(--acento);
+            outline-offset: 2px;
+            transform: translateZ(28px) scale(1.04);
+            box-shadow: 0 10px 22px rgba(41, 38, 42, 0.2);
+        }
+
+        .pieza-vista-3d[aria-pressed="false"] {
+            border-style: dashed;
+            transform: translateZ(34px) scale(1.03);
+            box-shadow: 0 12px 18px rgba(41, 38, 42, 0.2);
+        }
+
+        .pieza-vista-3d strong {
+            display: block;
+            max-width: 100%;
+            margin-top: 7px;
+            font-size: 0.78rem;
+            line-height: 1.2;
+        }
+
+        .pieza-vista-3d small {
+            display: block;
+            margin-top: 3px;
+            font-size: 0.68rem;
+        }
+
+        .forma-pieza-3d {
+            position: relative;
+            display: block;
+            width: 48px;
+            height: 28px;
+            border: 1px solid hsl(var(--tono-pieza), 48%, 34%);
+            border-radius: 3px;
+            background: linear-gradient(145deg, hsl(var(--tono-pieza), 62%, 79%), hsl(var(--tono-pieza), 55%, 56%));
+            box-shadow: 7px 8px 0 hsl(var(--tono-pieza), 42%, 42%), 12px 14px 10px rgba(41, 38, 42, 0.16);
+            transform: rotateX(52deg) rotateZ(-28deg);
+            transform-style: preserve-3d;
+        }
+
+        .forma-pieza-3d::before,
+        .forma-pieza-3d::after {
+            position: absolute;
+            display: block;
+            content: "";
+        }
+
+        .forma-pieza-3d::before {
+            top: -9px;
+            left: 5px;
+            width: 48px;
+            height: 9px;
+            background: hsl(var(--tono-pieza), 68%, 86%);
+            transform: skewX(-38deg);
+            transform-origin: bottom;
+        }
+
+        .forma-pieza-3d::after {
+            top: 4px;
+            right: -9px;
+            width: 9px;
+            height: 28px;
+            background: hsl(var(--tono-pieza), 42%, 43%);
+            transform: skewY(-42deg);
+            transform-origin: left;
+        }
+
+        .controles-perspectiva {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+            gap: 10px;
+            margin: 14px 0;
+            padding: 14px;
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            background: var(--superficie);
+        }
+
+        .control-angulo {
+            display: grid;
+            gap: 5px;
+            font-size: 0.86rem;
+            font-weight: bold;
+        }
+
+        .control-angulo input {
+            width: 100%;
+            accent-color: var(--acento-oscuro);
+        }
+
+        .presets-perspectiva {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            align-items: end;
+        }
+
+        .presets-perspectiva button,
+        .control-perspectiva {
+            padding: 8px 10px;
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            background: var(--suave);
+            color: var(--texto);
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .controles-perspectiva button:focus-visible,
+        .pieza-vista-3d:focus-visible {
+            outline: 3px solid var(--acento);
+            outline-offset: 2px;
+        }
+
+        .ayuda-perspectiva {
+            margin: 8px 0;
+            font-size: 0.88rem;
+        }
+
+        .piezas-simulador {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+            margin: 12px 0;
+            perspective: 700px;
+        }
+
+        .pieza-simulador {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 12px;
+            border: 1px solid var(--borde);
+            border-radius: 9px;
+            background: var(--superficie);
+            color: var(--texto);
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+            transform: rotateX(5deg) rotateY(-7deg);
+            transform-style: preserve-3d;
+            box-shadow: 0 5px 0 var(--borde), 0 10px 16px rgba(41, 38, 42, 0.1);
+            transition: transform 180ms ease, opacity 180ms ease, box-shadow 180ms ease;
+        }
+
+        .pieza-simulador:hover {
+            transform: rotateX(0) rotateY(0) translateY(-3px);
+            box-shadow: 0 7px 0 var(--borde), 0 14px 20px rgba(41, 38, 42, 0.14);
+        }
+
+        .pieza-simulador[aria-pressed="false"] {
+            border-style: dashed;
+            opacity: 0.75;
+            transform: rotateX(-3deg) rotateY(8deg) translateZ(14px);
+        }
+
+        .pieza-simulador strong {
+            color: var(--acento-oscuro);
+        }
+
+        .pieza-simulador span {
+            font-size: 0.86rem;
+        }
+
+        .estado-simulador,
+        .informacion-simulador,
+        .estado-opiniones {
+            min-height: 2.8em;
+            margin: 12px 0;
+            padding: 12px;
+            border-left: 4px solid var(--acento);
+            border-radius: 6px;
+            background: var(--superficie);
+        }
+
+        .acciones-simulador {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nota-simulador {
+            font-size: 0.9rem;
+        }
+
+        .pasos-simulador {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+            padding: 0;
+            list-style: none;
+            counter-reset: paso;
+        }
+
+        .pasos-simulador li {
+            position: relative;
+            min-height: 76px;
+            padding: 14px 14px 14px 48px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: var(--superficie);
+            counter-increment: paso;
+        }
+
+        .pasos-simulador li::before {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: grid;
+            width: 26px;
+            height: 26px;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--acento-oscuro);
+            color: #ffffff;
+            content: counter(paso);
+            font-weight: bold;
+        }
+
+        .formulario-opiniones label {
+            display: block;
+            margin: 12px 0 6px;
+            font-weight: bold;
+        }
+
+        .formulario-opiniones textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            background: var(--superficie);
+            color: var(--texto);
+            font: inherit;
+            resize: vertical;
+        }
+
+        .lista-opiniones {
+            display: grid;
+            gap: 10px;
+            margin: 14px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .lista-opiniones li {
+            padding: 12px;
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            background: var(--superficie);
+            overflow-wrap: anywhere;
         }
 
         .selector-equipos {
@@ -916,6 +1345,34 @@
                 grid-template-columns: 1fr;
             }
 
+            .vista-simulador {
+                height: 590px;
+            }
+
+            .contexto-equipo {
+                height: 34%;
+            }
+
+            .escena-piezas {
+                top: 36%;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 5px;
+                padding: 5px;
+            }
+
+            .pieza-vista-3d {
+                min-height: 108px;
+                padding: 6px 3px;
+            }
+
+            .pieza-vista-3d strong {
+                font-size: 0.7rem;
+            }
+
+            .pieza-vista-3d small {
+                font-size: 0.62rem;
+            }
+
             header > nav {
                 top: 12px;
                 width: calc(100% - 24px);
@@ -978,6 +1435,12 @@
             html {
                 scroll-behavior: auto;
             }
+
+            .ilustracion-simulador,
+            .pieza-simulador,
+            .pieza-vista-3d {
+                transition: none;
+            }
         }
     </style>
 </head>
@@ -992,6 +1455,7 @@
                     <a href="#mantenimiento" data-pagina="mantenimiento">Mantenimiento de equipos</a>
                     <a href="#infraestructura" data-pagina="infraestructura">Requisitos de infraestructura</a>
                     <a href="#configuracion" data-pagina="configuracion">Configuración de equipos</a>
+                    <a href="#simuladores" data-pagina="simuladores">Simuladores 3D</a>
                 </div>
             </details>
             <div class="controles-header">
@@ -1003,7 +1467,7 @@
             <div class="hero-texto">
                 <p class="etiqueta">Tecnología / Aprendizaje</p>
                 <h1>Competencias<br>digitales</h1>
-                <p>Ofimática, mantenimiento, infraestructura y configuración de equipos.</p>
+                <p>Ofimática, mantenimiento, infraestructura, configuración y simuladores 3D.</p>
             </div>
             <svg class="hero-ilustracion" viewBox="0 0 460 340" role="img" aria-label="Ilustración original de un computador y circuitos tecnológicos">
                 <circle cx="244" cy="164" r="137" fill="#c62e3b" opacity=".86"/>
@@ -1039,7 +1503,7 @@
         <section class="pagina activa" id="inicio" aria-labelledby="titulo-inicio">
             <h2 id="titulo-inicio">Bienvenido a la página de competencias tecnológicas</h2>
             <p class="introduccion">
-                Explora los cuatro temas seleccionando una tarjeta o usando el menú. Cada opción abre una sección independiente para que puedas concentrarte en el contenido que necesitas.
+                Explora los temas y el laboratorio seleccionando una tarjeta o usando el menú. Cada opción abre una sección independiente para que puedas concentrarte en el contenido que necesitas.
             </p>
 
             <div class="tarjetas-inicio" aria-label="Resumen de los temas">
@@ -1070,6 +1534,12 @@
                         <path d="M8 21h8M12 17v4M7 8h10M7 11h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                     </svg>
                     <div><h3>Configuración</h3><p>Preparación del sistema, aplicaciones, cuentas y periféricos.</p></div>
+                </a>
+                <a class="tarjeta-tema" href="#simuladores">
+                    <svg class="tarjeta-icono" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m12 3 9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+                    </svg>
+                    <div><h3>Simuladores 3D</h3><p>Arma y desarma computadores de mesa, portátiles e impresoras por componentes.</p></div>
                 </a>
             </div>
             <p class="introduccion">Para abrir un tema, selecciona su tarjeta o búscalo en el menú superior.</p>
@@ -1855,9 +2325,134 @@
             <nav class="navegacion-tema" aria-label="Navegación entre temas">
                 <a href="#infraestructura">Anterior: Infraestructura</a>
                 <a class="inicio-link" href="#inicio">Volver a Inicio</a>
+                <a href="#simuladores">Siguiente: Simuladores 3D</a>
+            </nav>
+        </section>
+
+        <section class="pagina pagina-simuladores" id="simuladores" aria-labelledby="titulo-simuladores">
+            <div class="temas">
+                <article>
+                    <span class="numero" aria-hidden="true">3D</span>
+                    <h2 id="titulo-simuladores">Laboratorio de simuladores 3D</h2>
+                    <p>Explora los componentes de cada equipo y practica el armado y desarmado en una caja virtual 3D. Cuando retires piezas, aparecerán por separado para que puedas seleccionarlas y observarlas desde distintos ángulos.</p>
+
+                    <section class="laboratorio-simuladores" aria-labelledby="titulo-simulador">
+                        <h3 id="titulo-simulador">Arma y desarma el equipo</h3>
+                        <ol class="pasos-simulador">
+                            <li>Selecciona computador de mesa, portátil o impresora.</li>
+                            <li>Retira las piezas para verlas individualmente en la caja 3D.</li>
+                            <li>Arrastra la escena o usa los controles para girar, inclinar y acercar la vista.</li>
+                        </ol>
+                        <div class="selector-simulador" role="group" aria-label="Seleccionar equipo para simular">
+                            <button type="button" class="equipo-simulador" data-equipo-simulador="escritorio" aria-pressed="true">Computador de mesa</button>
+                            <button type="button" class="equipo-simulador" data-equipo-simulador="portatil" aria-pressed="false">Portátil</button>
+                            <button type="button" class="equipo-simulador" data-equipo-simulador="impresora" aria-pressed="false">Impresora</button>
+                        </div>
+                        <div class="controles-perspectiva" role="group" aria-label="Controles de perspectiva 3D">
+                            <label class="control-angulo" for="rotacion-x">Inclinación vertical
+                                <input id="rotacion-x" type="range" min="-180" max="180" value="18">
+                            </label>
+                            <label class="control-angulo" for="rotacion-y">Giro horizontal
+                                <input id="rotacion-y" type="range" min="-180" max="180" value="-18">
+                            </label>
+                            <label class="control-angulo" for="rotacion-z">Rotación lateral
+                                <input id="rotacion-z" type="range" min="-180" max="180" value="0">
+                            </label>
+                            <label class="control-angulo" for="zoom-escena">Acercamiento
+                                <input id="zoom-escena" type="range" min="60" max="140" value="100">
+                            </label>
+                            <div class="presets-perspectiva" aria-label="Vistas rápidas">
+                                <button type="button" class="control-perspectiva" data-vista="frontal">Frontal</button>
+                                <button type="button" class="control-perspectiva" data-vista="superior">Superior</button>
+                                <button type="button" class="control-perspectiva" data-vista="lateral">Lateral</button>
+                                <button type="button" id="restablecer-perspectiva">Restablecer vista</button>
+                            </div>
+                        </div>
+                        <div class="vista-simulador" id="caja-virtual" role="group" aria-label="Caja virtual 3D. Arrastra para girar la escena." aria-describedby="ayuda-perspectiva" tabindex="0">
+                            <div class="escena-rotativa" id="escena-rotativa">
+                                <div class="contexto-equipo">
+                                    <svg class="ilustracion-simulador" data-vista-simulador="escritorio" viewBox="0 0 440 220" role="img" aria-label="Modelo isométrico de computador de mesa">
+                                        <path d="M75 41 96 28h201l-20 13z" fill="#84777d"/>
+                                        <path d="M277 41 297 28v121l-20 15z" fill="#4a4146"/>
+                                        <path d="M75 41h202v123H75z" fill="#292226"/>
+                                        <path d="M89 54h174v96H89z" fill="#faedef"/>
+                                        <path d="m89 54 18-11h174l-18 11z" fill="#fff9fa"/>
+                                        <path d="M148 164h38v20h-38z" fill="#6d5f65"/>
+                                        <path d="m148 184 10-7h38l-10 7z" fill="#b5a8ad"/>
+                                        <path d="M128 184h79l18 11h-115z" fill="#d93b47"/>
+                                        <path d="M290 72 308 60h84l-18 12z" fill="#aaa0a4"/>
+                                        <path d="M374 72 392 60v122l-18 12z" fill="#40383d"/>
+                                        <path d="M290 72h84v122h-84z" fill="#686066"/>
+                                        <circle cx="332" cy="111" r="22" fill="#faedef"/>
+                                        <circle cx="332" cy="111" r="10" fill="#d93b47"/>
+                                        <path d="M305 174h53v5h-53z" fill="#b7aeb1"/>
+                                        <circle cx="354" cy="184" r="5" fill="#f3c969"/>
+                                        <path d="M115 205h183" stroke="#887c81" stroke-width="4" stroke-linecap="round"/>
+                                    </svg>
+                                    <svg class="ilustracion-simulador" data-vista-simulador="portatil" viewBox="0 0 440 220" role="img" aria-label="Modelo isométrico de un portátil" hidden>
+                                        <path d="m132 40 22-14h176l-22 14z" fill="#84777d"/>
+                                        <path d="M308 40 330 26v114l-22 15z" fill="#40383d"/>
+                                        <path d="M132 40h176v115H132z" fill="#292226"/>
+                                        <path d="M146 53h148v89H146z" fill="#faedef"/>
+                                        <path d="m146 53 18-11h148l-18 11z" fill="#fff9fa"/>
+                                        <path d="m104 157 22-15h219l-22 15z" fill="#aaa0a4"/>
+                                        <path d="M104 157h219l39 34H143z" fill="#686066"/>
+                                        <path d="m323 157 39 34-22 15-38-34z" fill="#4a4146"/>
+                                        <path d="m155 165 147 1 17 15-146-2z" fill="#d6cdd0"/>
+                                        <path d="m208 178 56 1 9 9-57-1z" fill="#faedef"/>
+                                        <path d="M112 198h223" stroke="#887c81" stroke-width="4" stroke-linecap="round"/>
+                                    </svg>
+                                    <svg class="ilustracion-simulador" data-vista-simulador="impresora" viewBox="0 0 440 220" role="img" aria-label="Modelo isométrico de una impresora" hidden>
+                                        <path d="m137 58 22-14h164l-22 14z" fill="#fff9fa"/>
+                                        <path d="M301 58 323 44v46l-22 15z" fill="#4a4146"/>
+                                        <path d="M137 58h164v47H137z" fill="#faedef" stroke="#292226" stroke-width="5"/>
+                                        <path d="m100 105 22-14h219l-22 14z" fill="#aaa0a4"/>
+                                        <path d="M100 105h219a18 18 0 0 1 18 18v53H82v-53a18 18 0 0 1 18-18z" fill="#686066"/>
+                                        <path d="m319 105 18-14v71l-18 14z" fill="#40383d"/>
+                                        <path d="m126 151 19-12h145l-19 12z" fill="#b5a8ad"/>
+                                        <path d="M126 151h145v29H126z" fill="#292226"/>
+                                        <path d="m123 182 18-12h164l-18 12z" fill="#fff9fa"/>
+                                        <path d="M123 182h164v18H123z" fill="#d6cdd0"/>
+                                        <circle cx="310" cy="119" r="6" fill="#f3c969"/>
+                                        <path d="M91 207h245" stroke="#887c81" stroke-width="4" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                                <div class="escena-piezas" id="escena-piezas" aria-label="Piezas individuales del equipo"></div>
+                            </div>
+                        </div>
+                        <p class="ayuda-perspectiva" id="ayuda-perspectiva" role="status" aria-live="polite">Arrastra la caja 3D para girarla. También puedes usar las flechas del teclado o los controles de perspectiva.</p>
+                        <p id="progreso-simulador" class="estado-simulador" role="status" aria-live="polite">Componentes instalados: 0.</p>
+                        <h4>Componentes instalados: pulsa para separarlos</h4>
+                        <div id="componentes-instalados" class="piezas-simulador"></div>
+                        <h4>Componentes separados: pulsa para volver a instalarlos</h4>
+                        <div id="componentes-retirados" class="piezas-simulador"></div>
+                        <p id="informacion-simulador" class="informacion-simulador" role="status" aria-live="polite">Selecciona una pieza para conocer su función.</p>
+                        <div class="acciones-simulador">
+                            <button type="button" id="desarmar-equipo">Separar todos los componentes</button>
+                            <button type="button" id="armar-equipo">Restaurar equipo completo</button>
+                        </div>
+                        <p class="nota-simulador">Simulación educativa: las ilustraciones son representaciones visuales, no muestran un procedimiento real de reparación. Las intervenciones internas, especialmente en baterías y fuentes eléctricas, deben quedar a cargo de personal capacitado y seguir las indicaciones del fabricante.</p>
+                    </section>
+                </article>
+            </div>
+            <nav class="navegacion-tema" aria-label="Navegación del laboratorio">
+                <a href="#configuracion">Anterior: Configuración</a>
+                <a class="inicio-link" href="#inicio">Volver a Inicio</a>
             </nav>
         </section>
     </main>
+
+    <section class="casilla-opiniones" aria-labelledby="titulo-opiniones">
+        <h2 id="titulo-opiniones">Opiniones y sugerencias</h2>
+        <p>Cuéntanos qué te pareció el material o qué tema te gustaría ver mejorado. Las opiniones solo aparecen en esta página mientras permanezca abierta; no se envían ni se guardan.</p>
+        <form id="formulario-opiniones" class="formulario-opiniones">
+            <label for="texto-opinion">Tu opinión</label>
+            <textarea id="texto-opinion" name="opinion" minlength="3" maxlength="500" required placeholder="Escribe aquí tu comentario (máximo 500 caracteres)"></textarea>
+            <button type="submit">Agregar opinión</button>
+            <p id="estado-opiniones" class="estado-opiniones" role="status" aria-live="polite"></p>
+        </form>
+        <ul id="lista-opiniones" class="lista-opiniones" aria-label="Opiniones agregadas en esta página"></ul>
+    </section>
 
     <footer>
         <p>Aprender tecnología también significa utilizarla de manera responsable y cuidar los recursos.</p>
@@ -2015,6 +2610,322 @@
             });
         });
 
+        const configuracionesSimulador = {
+            escritorio: {
+                componentes: [
+                    { id: "monitor", nombre: "Monitor", informacion: "Muestra la imagen del computador y se conecta a la torre mediante un cable compatible." },
+                    { id: "torre", nombre: "Torre", informacion: "La carcasa protege y organiza los componentes internos del computador de mesa." },
+                    { id: "placa", nombre: "Placa principal", informacion: "Conecta los componentes y permite que se comuniquen. Su instalación real requiere conocimientos técnicos." },
+                    { id: "memoria", nombre: "Memoria RAM", informacion: "Mantiene disponibles temporalmente los datos que utilizan los programas mientras están abiertos." },
+                    { id: "almacenamiento", nombre: "Unidad de almacenamiento", informacion: "Guarda el sistema operativo, las aplicaciones y los archivos del usuario." },
+                    { id: "teclado", nombre: "Teclado y mouse", informacion: "Periféricos de entrada para escribir e interactuar con el sistema." }
+                ]
+            },
+            portatil: {
+                componentes: [
+                    { id: "pantalla", nombre: "Pantalla", informacion: "Presenta la información visual; debe protegerse de golpes y presión." },
+                    { id: "teclado-portatil", nombre: "Teclado y panel táctil", informacion: "Permiten escribir y controlar el puntero sin periféricos externos." },
+                    { id: "placa-portatil", nombre: "Placa principal", informacion: "Integra y conecta los componentes del portátil dentro de un espacio compacto." },
+                    { id: "memoria-portatil", nombre: "Memoria", informacion: "Ayuda a ejecutar los programas. En algunos modelos está integrada y no es reemplazable por el usuario." },
+                    { id: "ssd-portatil", nombre: "Unidad de almacenamiento", informacion: "Conserva el sistema y los archivos. Antes de una intervención real, respalda los datos." },
+                    { id: "bateria-portatil", nombre: "Batería", informacion: "Almacena energía para usar el equipo sin conexión. Si se hincha o daña, no la manipules y solicita asistencia técnica." },
+                    { id: "adaptador", nombre: "Adaptador de corriente", informacion: "Suministra energía mediante un cargador compatible con las especificaciones del fabricante." }
+                ]
+            },
+            impresora: {
+                componentes: [
+                    { id: "carcasa-impresora", nombre: "Carcasa", informacion: "Protege los mecanismos y componentes de la impresora." },
+                    { id: "bandeja-papel", nombre: "Bandeja de papel", informacion: "Sostiene el papel alineado para que el mecanismo pueda tomarlo." },
+                    { id: "cartucho", nombre: "Cartucho o tóner", informacion: "Contiene el material de impresión; su tipo depende del modelo de impresora." },
+                    { id: "rodillos", nombre: "Rodillos de alimentación", informacion: "Transportan el papel por el recorrido de impresión. Sigue las instrucciones del fabricante para limpiarlos." },
+                    { id: "panel-impresora", nombre: "Panel de control", informacion: "Permite revisar el estado y seleccionar funciones disponibles en el dispositivo." },
+                    { id: "bandeja-salida", nombre: "Bandeja de salida", informacion: "Recibe las hojas cuando termina la impresión." }
+                ]
+            }
+        };
+        const botonesSimulador = document.querySelectorAll(".equipo-simulador");
+        const vistasSimulador = document.querySelectorAll(".ilustracion-simulador");
+        const instaladosSimulador = document.getElementById("componentes-instalados");
+        const retiradosSimulador = document.getElementById("componentes-retirados");
+        const escenaPiezas = document.getElementById("escena-piezas");
+        const escenaRotativa = document.getElementById("escena-rotativa");
+        const cajaVirtual = document.getElementById("caja-virtual");
+        const progresoSimulador = document.getElementById("progreso-simulador");
+        const informacionSimulador = document.getElementById("informacion-simulador");
+        const controlesAngulo = {
+            x: document.getElementById("rotacion-x"),
+            y: document.getElementById("rotacion-y"),
+            z: document.getElementById("rotacion-z"),
+            zoom: document.getElementById("zoom-escena")
+        };
+        const perspectiva = {
+            x: Number(controlesAngulo.x.value),
+            y: Number(controlesAngulo.y.value),
+            z: Number(controlesAngulo.z.value),
+            zoom: Number(controlesAngulo.zoom.value) / 100
+        };
+        const estadosSimulador = Object.create(null);
+        let equipoSimuladorActivo = "escritorio";
+
+        Object.keys(configuracionesSimulador).forEach(function (equipo) {
+            estadosSimulador[equipo] = new Set(
+                configuracionesSimulador[equipo].componentes.map(function (componente) {
+                    return componente.id;
+                })
+            );
+        });
+
+        function actualizarPerspectiva() {
+            escenaRotativa.style.transform = "rotateX(" + perspectiva.x + "deg) "
+                + "rotateY(" + perspectiva.y + "deg) rotateZ(" + perspectiva.z + "deg) "
+                + "scale(" + perspectiva.zoom + ")";
+            controlesAngulo.x.value = String(perspectiva.x);
+            controlesAngulo.y.value = String(perspectiva.y);
+            controlesAngulo.z.value = String(perspectiva.z);
+            controlesAngulo.zoom.value = String(Math.round(perspectiva.zoom * 100));
+        }
+
+        function normalizarAngulo(angulo) {
+            return ((angulo + 180) % 360 + 360) % 360 - 180;
+        }
+
+        Object.keys(controlesAngulo).forEach(function (eje) {
+            controlesAngulo[eje].addEventListener("input", function () {
+                perspectiva[eje] = eje === "zoom"
+                    ? Number(controlesAngulo[eje].value) / 100
+                    : Number(controlesAngulo[eje].value);
+                actualizarPerspectiva();
+            });
+        });
+
+        document.querySelectorAll(".control-perspectiva[data-vista]").forEach(function (boton) {
+            boton.addEventListener("click", function () {
+                const vistas = {
+                    frontal: { x: 12, y: -18, z: 0 },
+                    superior: { x: -72, y: 0, z: 0 },
+                    lateral: { x: 18, y: -90, z: 0 }
+                };
+                const vista = vistas[boton.dataset.vista];
+                perspectiva.x = vista.x;
+                perspectiva.y = vista.y;
+                perspectiva.z = vista.z;
+                actualizarPerspectiva();
+            });
+        });
+
+        document.getElementById("restablecer-perspectiva").addEventListener("click", function () {
+            perspectiva.x = 18;
+            perspectiva.y = -18;
+            perspectiva.z = 0;
+            perspectiva.zoom = 1;
+            actualizarPerspectiva();
+        });
+
+        let posicionPuntero = null;
+        let escenaArrastrada = false;
+        let movimientoDeArrastre = false;
+
+        cajaVirtual.addEventListener("pointerdown", function (evento) {
+            if (evento.target.closest(".pieza-vista-3d, .controles-perspectiva")) {
+                return;
+            }
+
+            posicionPuntero = { x: evento.clientX, y: evento.clientY };
+            escenaArrastrada = false;
+            cajaVirtual.setPointerCapture(evento.pointerId);
+        });
+
+        cajaVirtual.addEventListener("pointermove", function (evento) {
+            if (!posicionPuntero) {
+                return;
+            }
+
+            const diferenciaX = evento.clientX - posicionPuntero.x;
+            const diferenciaY = evento.clientY - posicionPuntero.y;
+            if (Math.abs(diferenciaX) + Math.abs(diferenciaY) > 2) {
+                escenaArrastrada = true;
+            }
+            perspectiva.y = normalizarAngulo(perspectiva.y + diferenciaX * 0.65);
+            perspectiva.x = normalizarAngulo(perspectiva.x - diferenciaY * 0.65);
+            posicionPuntero = { x: evento.clientX, y: evento.clientY };
+            actualizarPerspectiva();
+        });
+
+        cajaVirtual.addEventListener("pointerup", function (evento) {
+            if (posicionPuntero && cajaVirtual.hasPointerCapture(evento.pointerId)) {
+                cajaVirtual.releasePointerCapture(evento.pointerId);
+            }
+            if (escenaArrastrada) {
+                movimientoDeArrastre = true;
+                window.setTimeout(function () {
+                    movimientoDeArrastre = false;
+                }, 0);
+            }
+            posicionPuntero = null;
+        });
+
+        cajaVirtual.addEventListener("pointercancel", function () {
+            posicionPuntero = null;
+        });
+
+        cajaVirtual.addEventListener("click", function (evento) {
+            if (movimientoDeArrastre) {
+                evento.preventDefault();
+                evento.stopPropagation();
+            }
+        }, true);
+
+        cajaVirtual.addEventListener("keydown", function (evento) {
+            const paso = evento.shiftKey ? 15 : 5;
+            if (evento.key === "ArrowUp") {
+                perspectiva.x = normalizarAngulo(perspectiva.x - paso);
+            } else if (evento.key === "ArrowDown") {
+                perspectiva.x = normalizarAngulo(perspectiva.x + paso);
+            } else if (evento.key === "ArrowLeft") {
+                perspectiva.y = normalizarAngulo(perspectiva.y - paso);
+            } else if (evento.key === "ArrowRight") {
+                perspectiva.y = normalizarAngulo(perspectiva.y + paso);
+            } else if (evento.key === "+" || evento.key === "=") {
+                perspectiva.zoom = Math.min(1.4, perspectiva.zoom + 0.05);
+            } else if (evento.key === "-") {
+                perspectiva.zoom = Math.max(0.6, perspectiva.zoom - 0.05);
+            } else {
+                return;
+            }
+            evento.preventDefault();
+            actualizarPerspectiva();
+        });
+
+        actualizarPerspectiva();
+
+        function alternarComponente(componente) {
+            const instalados = estadosSimulador[equipoSimuladorActivo];
+            if (instalados.has(componente.id)) {
+                instalados.delete(componente.id);
+                informacionSimulador.textContent = componente.nombre
+                    + " separado del equipo. " + componente.informacion;
+            } else {
+                instalados.add(componente.id);
+                informacionSimulador.textContent = componente.nombre
+                    + " instalado en el equipo. " + componente.informacion;
+            }
+            renderizarSimulador();
+        }
+
+        function renderizarSimulador() {
+            const componentes = configuracionesSimulador[equipoSimuladorActivo].componentes;
+            const instalados = estadosSimulador[equipoSimuladorActivo];
+            instaladosSimulador.replaceChildren();
+            retiradosSimulador.replaceChildren();
+            escenaPiezas.replaceChildren();
+
+            componentes.forEach(function (componente, indice) {
+                const estaInstalado = instalados.has(componente.id);
+                const boton = document.createElement("button");
+                const nombre = document.createElement("strong");
+                const accion = document.createElement("span");
+                const pieza3D = document.createElement("button");
+                const forma3D = document.createElement("span");
+                const nombre3D = document.createElement("strong");
+                const estado3D = document.createElement("small");
+
+                boton.type = "button";
+                boton.className = "pieza-simulador";
+                boton.setAttribute("aria-pressed", String(estaInstalado));
+                nombre.textContent = componente.nombre;
+                accion.textContent = estaInstalado ? "Pulsa para retirar" : "Pulsa para instalar";
+                boton.append(nombre, accion);
+                boton.addEventListener("click", function () {
+                    alternarComponente(componente);
+                });
+                (estaInstalado ? instaladosSimulador : retiradosSimulador).appendChild(boton);
+
+                pieza3D.type = "button";
+                pieza3D.className = "pieza-vista-3d";
+                pieza3D.setAttribute("aria-pressed", String(estaInstalado));
+                pieza3D.setAttribute(
+                    "aria-label",
+                    componente.nombre + (estaInstalado ? ", instalada. Pulsa para separar." : ", separada. Pulsa para instalar.")
+                );
+                pieza3D.style.setProperty("--tono-pieza", String((indice * 49 + 350) % 360));
+                forma3D.className = "forma-pieza-3d";
+                forma3D.setAttribute("aria-hidden", "true");
+                nombre3D.textContent = componente.nombre;
+                estado3D.textContent = estaInstalado ? "Instalada" : "Separada";
+                pieza3D.append(forma3D, nombre3D, estado3D);
+                pieza3D.addEventListener("click", function () {
+                    alternarComponente(componente);
+                });
+                escenaPiezas.appendChild(pieza3D);
+            });
+
+            progresoSimulador.textContent = "Componentes instalados: " + instalados.size
+                + " de " + componentes.length + ". La caja muestra todas las piezas; "
+                + (componentes.length - instalados.size) + " están separadas.";
+            escenaRotativa.classList.toggle("modelo-explotado", instalados.size === 0);
+            botonesSimulador.forEach(function (boton) {
+                boton.setAttribute(
+                    "aria-pressed",
+                    String(boton.dataset.equipoSimulador === equipoSimuladorActivo)
+                );
+            });
+            vistasSimulador.forEach(function (vista) {
+                if (vista.dataset.vistaSimulador === equipoSimuladorActivo) {
+                    vista.removeAttribute("hidden");
+                } else {
+                    vista.setAttribute("hidden", "");
+                }
+            });
+        }
+
+        botonesSimulador.forEach(function (boton) {
+            boton.addEventListener("click", function () {
+                equipoSimuladorActivo = boton.dataset.equipoSimulador;
+                informacionSimulador.textContent = "Seleccionaste "
+                    + boton.textContent.trim() + ". Pulsa un componente para instalarlo o retirarlo.";
+                renderizarSimulador();
+            });
+        });
+
+        document.getElementById("desarmar-equipo").addEventListener("click", function () {
+            estadosSimulador[equipoSimuladorActivo].clear();
+            informacionSimulador.textContent = "Todos los componentes se retiraron en esta simulación. "
+                + "En un equipo real, no abras ni desmontes componentes sin capacitación.";
+            renderizarSimulador();
+        });
+
+        document.getElementById("armar-equipo").addEventListener("click", function () {
+            configuracionesSimulador[equipoSimuladorActivo].componentes.forEach(function (componente) {
+                estadosSimulador[equipoSimuladorActivo].add(componente.id);
+            });
+            informacionSimulador.textContent = "El simulador muestra todos los componentes instalados. "
+                + "La configuración real depende del modelo del equipo.";
+            renderizarSimulador();
+        });
+
+        renderizarSimulador();
+
+        const formularioOpiniones = document.getElementById("formulario-opiniones");
+        formularioOpiniones.addEventListener("submit", function (evento) {
+            evento.preventDefault();
+            const campoOpinion = document.getElementById("texto-opinion");
+            const listaOpiniones = document.getElementById("lista-opiniones");
+            const estadoOpiniones = document.getElementById("estado-opiniones");
+            const opinion = campoOpinion.value.trim();
+
+            if (opinion.length < 3) {
+                estadoOpiniones.textContent = "Escribe una opinión de al menos 3 caracteres.";
+                campoOpinion.focus();
+                return;
+            }
+
+            const elementoOpinion = document.createElement("li");
+            elementoOpinion.textContent = opinion;
+            listaOpiniones.appendChild(elementoOpinion);
+            campoOpinion.value = "";
+            estadoOpiniones.textContent = "Opinión agregada en esta página. No se envió ni se guardó.";
+        });
+
         const rompecabezasRed = document.querySelector(".rompecabezas-red");
         if (rompecabezasRed) {
             const piezasRed = Array.from(rompecabezasRed.querySelectorAll(".pieza-rompecabezas"));
@@ -2025,6 +2936,7 @@
             const detalleEvaluacion = rompecabezasRed.querySelector("#detalle-evaluacion-red");
             const ubicaciones = Object.create(null);
             let piezaSeleccionada = null;
+            let zonaOrigenSeleccionada = null;
 
             function limpiarEvaluacion() {
                 resumenRompecabezas.textContent = "";
@@ -2041,9 +2953,7 @@
                 });
 
                 zonasRed.forEach(function (zona) {
-                    const piezaEnZona = Object.keys(ubicaciones).find(function (idPieza) {
-                        return ubicaciones[idPieza] === zona.dataset.zona;
-                    });
+                    const piezaEnZona = ubicaciones[zona.dataset.zona];
                     const nombrePieza = piezasRed.find(function (pieza) {
                         return pieza.dataset.pieza === piezaEnZona;
                     });
@@ -2057,6 +2967,10 @@
                         zona.dataset.etiqueta + (nombrePieza
                             ? ": contiene " + nombrePieza.textContent.trim()
                             : ": espacio vacío")
+                    );
+                    zona.classList.toggle(
+                        "pieza-seleccionada",
+                        zona.dataset.zona === zonaOrigenSeleccionada
                     );
                 });
             }
@@ -2074,33 +2988,47 @@
                     return;
                 }
 
-                Object.keys(ubicaciones).forEach(function (zona) {
-                    if (ubicaciones[zona] === idPieza) {
-                        delete ubicaciones[zona];
-                    }
-                });
+                const origen = Object.keys(ubicaciones).find(function (zona) {
+                    return ubicaciones[zona] === idPieza;
+                }) || zonaOrigenSeleccionada;
+                const piezaDesplazada = ubicaciones[idZona];
 
-                Object.keys(ubicaciones).forEach(function (zona) {
-                    if (zona === idZona) {
-                        delete ubicaciones[zona];
-                    }
-                });
+                if (origen === idZona) {
+                    piezaSeleccionada = null;
+                    zonaOrigenSeleccionada = null;
+                    actualizarTablero();
+                    estadoRompecabezas.textContent = pieza.textContent.trim() + " permanece en esta casilla.";
+                    return;
+                }
 
+                if (origen) {
+                    if (piezaDesplazada) {
+                        ubicaciones[origen] = piezaDesplazada;
+                    } else {
+                        delete ubicaciones[origen];
+                    }
+                }
                 ubicaciones[idZona] = idPieza;
                 piezaSeleccionada = null;
+                zonaOrigenSeleccionada = null;
                 limpiarEvaluacion();
                 actualizarTablero();
                 const zonaDestino = zonasRed.find(function (zona) {
                     return zona.dataset.zona === idZona;
                 });
                 estadoRompecabezas.textContent = "Colocaste " + pieza.textContent.trim() + " en "
-                    + zonaDestino.dataset.etiqueta + ".";
+                    + zonaDestino.dataset.etiqueta + (origen && piezaDesplazada
+                        ? "; las piezas intercambiaron sus casillas."
+                        : piezaDesplazada
+                            ? "; la pieza que estaba aquí volvió a la bandeja."
+                            : ".");
                 mostrarInformacion(pieza);
             }
 
             piezasRed.forEach(function (pieza) {
                 pieza.addEventListener("click", function () {
                     piezaSeleccionada = piezaSeleccionada === pieza.dataset.pieza ? null : pieza.dataset.pieza;
+                    zonaOrigenSeleccionada = null;
                     limpiarEvaluacion();
                     actualizarTablero();
 
@@ -2115,6 +3043,7 @@
 
                 pieza.addEventListener("dragstart", function (evento) {
                     piezaSeleccionada = pieza.dataset.pieza;
+                    zonaOrigenSeleccionada = null;
                     evento.dataTransfer.setData("text/plain", pieza.dataset.pieza);
                     evento.dataTransfer.effectAllowed = "move";
                     actualizarTablero();
@@ -2135,12 +3064,12 @@
                     });
 
                     if (pieza) {
-                        delete ubicaciones[zona.dataset.zona];
                         piezaSeleccionada = idPieza;
+                        zonaOrigenSeleccionada = zona.dataset.zona;
                         limpiarEvaluacion();
                         actualizarTablero();
                         estadoRompecabezas.textContent = "Seleccionaste " + pieza.textContent.trim()
-                            + ". Elige otra zona para moverla.";
+                            + " en esta casilla. Elige otra para moverla o intercambiarla sin perder piezas.";
                         mostrarInformacion(pieza);
                     } else {
                         estadoRompecabezas.textContent = "Selecciona una pieza y luego elige dónde ubicarla.";
@@ -2213,6 +3142,7 @@
                     delete ubicaciones[zona];
                 });
                 piezaSeleccionada = null;
+                zonaOrigenSeleccionada = null;
                 limpiarEvaluacion();
                 actualizarTablero();
                 estadoRompecabezas.textContent = "Rompecabezas reiniciado. Organiza la conexión desde Internet, pasando por el router, hasta los equipos.";
