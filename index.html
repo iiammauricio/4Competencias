@@ -31,6 +31,16 @@
             color: var(--texto);
             font-family: Arial, Helvetica, sans-serif;
             line-height: 1.65;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        input,
+        textarea,
+        select,
+        [contenteditable="true"] {
+            -webkit-user-select: text;
+            user-select: text;
         }
 
         body.tema-oscuro {
@@ -764,7 +774,15 @@
             margin: 14px 0;
         }
 
+        .modos-simulador {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
         .selector-simulador button,
+        .modos-simulador button,
         .acciones-simulador button,
         .formulario-opiniones button {
             padding: 9px 13px;
@@ -778,6 +796,7 @@
         }
 
         .selector-simulador button[aria-pressed="true"],
+        .modos-simulador button[aria-pressed="true"],
         .acciones-simulador button,
         .formulario-opiniones button {
             border-color: var(--acento-oscuro);
@@ -786,6 +805,7 @@
         }
 
         .selector-simulador button:focus-visible,
+        .modos-simulador button:focus-visible,
         .acciones-simulador button:focus-visible,
         .pieza-simulador:focus-visible,
         .formulario-opiniones button:focus-visible,
@@ -867,8 +887,6 @@
             border: 1px solid rgba(138, 126, 131, 0.28);
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.2);
-            transform: translateZ(10px);
-            transform-style: preserve-3d;
         }
 
         .pieza-vista-3d {
@@ -885,8 +903,6 @@
             font: inherit;
             text-align: center;
             cursor: pointer;
-            transform: translateZ(0);
-            transform-style: preserve-3d;
             transition: transform 180ms ease, opacity 180ms ease, box-shadow 180ms ease;
         }
 
@@ -895,13 +911,13 @@
             z-index: 1;
             outline: 2px solid var(--acento);
             outline-offset: 2px;
-            transform: translateZ(28px) scale(1.04);
+            transform: scale(1.02);
             box-shadow: 0 10px 22px rgba(41, 38, 42, 0.2);
         }
 
         .pieza-vista-3d[aria-pressed="false"] {
             border-style: dashed;
-            transform: translateZ(34px) scale(1.03);
+            transform: none;
             box-shadow: 0 12px 18px rgba(41, 38, 42, 0.2);
         }
 
@@ -917,6 +933,7 @@
             display: block;
             margin-top: 3px;
             font-size: 0.68rem;
+            line-height: 1.25;
         }
 
         .forma-pieza-3d {
@@ -1009,6 +1026,32 @@
         .ayuda-perspectiva {
             margin: 8px 0;
             font-size: 0.88rem;
+        }
+
+        .nota-dimensional,
+        .paso-guiado {
+            margin: 12px 0;
+            padding: 12px;
+            border-left: 4px solid var(--acento);
+            border-radius: 6px;
+            background: var(--superficie);
+        }
+
+        .progreso-guiado {
+            display: block;
+            width: 100%;
+            height: 12px;
+            margin: 10px 0;
+            accent-color: var(--acento-oscuro);
+        }
+
+        .progreso-guiado[hidden] {
+            display: none;
+        }
+
+        .acciones-simulador button:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
         }
 
         .piezas-simulador {
@@ -2334,13 +2377,14 @@
                 <article>
                     <span class="numero" aria-hidden="true">3D</span>
                     <h2 id="titulo-simuladores">Laboratorio de simuladores 3D</h2>
-                    <p>Explora los componentes de cada equipo y practica el armado y desarmado en una caja virtual 3D. Cuando retires piezas, aparecerán por separado para que puedas seleccionarlas y observarlas desde distintos ángulos.</p>
+                    <p>Explora los componentes de cada equipo y practica el armado y desarmado en el laboratorio 3D de esta página. Al retirar piezas, aparecerán por separado para que puedas seleccionarlas y observarlas desde distintos ángulos.</p>
 
                     <section class="laboratorio-simuladores" aria-labelledby="titulo-simulador">
                         <h3 id="titulo-simulador">Arma y desarma el equipo</h3>
                         <ol class="pasos-simulador">
                             <li>Selecciona computador de mesa, portátil o impresora.</li>
-                            <li>Retira las piezas para verlas individualmente en la caja 3D.</li>
+                            <li>Elige exploración libre o inicia una práctica guiada de ensamble/desensamble.</li>
+                            <li>Consulta las medidas de cada pieza: largo, ancho y profundidad.</li>
                             <li>Arrastra la escena o usa los controles para girar, inclinar y acercar la vista.</li>
                         </ol>
                         <div class="selector-simulador" role="group" aria-label="Seleccionar equipo para simular">
@@ -2348,6 +2392,14 @@
                             <button type="button" class="equipo-simulador" data-equipo-simulador="portatil" aria-pressed="false">Portátil</button>
                             <button type="button" class="equipo-simulador" data-equipo-simulador="impresora" aria-pressed="false">Impresora</button>
                         </div>
+                        <p class="nota-dimensional">Dimensiones orientativas por pieza: <strong>Largo (X) × Ancho (Y) × Profundidad (Z)</strong>, en milímetros. Las medidas reales cambian según el fabricante y el modelo.</p>
+                        <div class="modos-simulador" role="group" aria-label="Elegir modo de práctica">
+                            <button type="button" data-modo-simulador="libre" aria-pressed="true">Exploración libre</button>
+                            <button type="button" data-modo-simulador="desensamble" aria-pressed="false">Practicar desensamble</button>
+                            <button type="button" data-modo-simulador="ensamble" aria-pressed="false">Practicar ensamble</button>
+                        </div>
+                        <p class="paso-guiado" id="paso-guiado" role="status" aria-live="polite">Exploración libre: selecciona una pieza instalada para separarla o una pieza separada para instalarla.</p>
+                        <progress class="progreso-guiado" id="progreso-guiado" max="1" value="0" aria-label="Progreso de la práctica guiada" hidden></progress>
                         <div class="controles-perspectiva" role="group" aria-label="Controles de perspectiva 3D">
                             <label class="control-angulo" for="rotacion-x">Inclinación vertical
                                 <input id="rotacion-x" type="range" min="-180" max="180" value="18">
@@ -2368,7 +2420,7 @@
                                 <button type="button" id="restablecer-perspectiva">Restablecer vista</button>
                             </div>
                         </div>
-                        <div class="vista-simulador" id="caja-virtual" role="group" aria-label="Caja virtual 3D. Arrastra para girar la escena." aria-describedby="ayuda-perspectiva" tabindex="0">
+                        <div class="vista-simulador" id="escena-interactiva-3d" role="group" aria-label="Escena interactiva 3D. Arrastra para girarla." aria-describedby="ayuda-perspectiva" tabindex="0">
                             <div class="escena-rotativa" id="escena-rotativa">
                                 <div class="contexto-equipo">
                                     <svg class="ilustracion-simulador" data-vista-simulador="escritorio" viewBox="0 0 440 220" role="img" aria-label="Modelo isométrico de computador de mesa">
@@ -2420,7 +2472,7 @@
                                 <div class="escena-piezas" id="escena-piezas" aria-label="Piezas individuales del equipo"></div>
                             </div>
                         </div>
-                        <p class="ayuda-perspectiva" id="ayuda-perspectiva" role="status" aria-live="polite">Arrastra la caja 3D para girarla. También puedes usar las flechas del teclado o los controles de perspectiva.</p>
+                        <p class="ayuda-perspectiva" id="ayuda-perspectiva" role="status" aria-live="polite">Arrastra la escena 3D para girarla. También puedes usar las flechas del teclado o los controles de perspectiva.</p>
                         <p id="progreso-simulador" class="estado-simulador" role="status" aria-live="polite">Componentes instalados: 0.</p>
                         <h4>Componentes instalados: pulsa para separarlos</h4>
                         <div id="componentes-instalados" class="piezas-simulador"></div>
@@ -2458,6 +2510,23 @@
         <p>Aprender tecnología también significa utilizarla de manera responsable y cuidar los recursos.</p>
     </footer>
     <script>
+        function esCampoEditable(elemento) {
+            return elemento instanceof Element
+                && Boolean(elemento.closest("input, textarea, select, [contenteditable='true']"));
+        }
+
+        document.addEventListener("copy", function (evento) {
+            if (!esCampoEditable(evento.target)) {
+                evento.preventDefault();
+            }
+        });
+
+        document.addEventListener("contextmenu", function (evento) {
+            if (!esCampoEditable(evento.target)) {
+                evento.preventDefault();
+            }
+        });
+
         const paginas = document.querySelectorAll(".pagina");
         const enlacesMenu = document.querySelectorAll(".opciones a[data-pagina]");
         const menu = document.querySelector(".menu");
@@ -2643,15 +2712,52 @@
                 ]
             }
         };
+        const dimensionesComponentes = {
+            escritorio: {
+                monitor: { largo: 540, ancho: 320, profundidad: 55 },
+                torre: { largo: 430, ancho: 200, profundidad: 450 },
+                placa: { largo: 305, ancho: 244, profundidad: 6 },
+                memoria: { largo: 133, ancho: 31, profundidad: 4 },
+                almacenamiento: { largo: 100, ancho: 70, profundidad: 7 },
+                teclado: { largo: 450, ancho: 150, profundidad: 25 }
+            },
+            portatil: {
+                pantalla: { largo: 360, ancho: 230, profundidad: 8 },
+                "teclado-portatil": { largo: 340, ancho: 240, profundidad: 12 },
+                "placa-portatil": { largo: 300, ancho: 200, profundidad: 10 },
+                "memoria-portatil": { largo: 70, ancho: 30, profundidad: 5 },
+                "ssd-portatil": { largo: 80, ancho: 22, profundidad: 3 },
+                "bateria-portatil": { largo: 250, ancho: 100, profundidad: 10 },
+                adaptador: { largo: 110, ancho: 45, profundidad: 30 }
+            },
+            impresora: {
+                "carcasa-impresora": { largo: 420, ancho: 350, profundidad: 200 },
+                "bandeja-papel": { largo: 220, ancho: 100, profundidad: 25 },
+                cartucho: { largo: 100, ancho: 35, profundidad: 110 },
+                rodillos: { largo: 210, ancho: 25, profundidad: 25 },
+                "panel-impresora": { largo: 80, ancho: 35, profundidad: 15 },
+                "bandeja-salida": { largo: 210, ancho: 120, profundidad: 25 }
+            }
+        };
+        const ordenEnsambleSimulador = {
+            escritorio: ["torre", "placa", "memoria", "almacenamiento", "monitor", "teclado"],
+            portatil: ["placa-portatil", "memoria-portatil", "ssd-portatil", "teclado-portatil", "pantalla", "bateria-portatil", "adaptador"],
+            impresora: ["carcasa-impresora", "rodillos", "bandeja-papel", "cartucho", "panel-impresora", "bandeja-salida"]
+        };
         const botonesSimulador = document.querySelectorAll(".equipo-simulador");
         const vistasSimulador = document.querySelectorAll(".ilustracion-simulador");
         const instaladosSimulador = document.getElementById("componentes-instalados");
         const retiradosSimulador = document.getElementById("componentes-retirados");
         const escenaPiezas = document.getElementById("escena-piezas");
         const escenaRotativa = document.getElementById("escena-rotativa");
-        const cajaVirtual = document.getElementById("caja-virtual");
+        const escenaInteractiva3D = document.getElementById("escena-interactiva-3d");
         const progresoSimulador = document.getElementById("progreso-simulador");
         const informacionSimulador = document.getElementById("informacion-simulador");
+        const pasoGuiado = document.getElementById("paso-guiado");
+        const progresoGuiado = document.getElementById("progreso-guiado");
+        const botonesModoSimulador = document.querySelectorAll("[data-modo-simulador]");
+        const botonSepararTodo = document.getElementById("desarmar-equipo");
+        const botonEnsamblarTodo = document.getElementById("armar-equipo");
         const controlesAngulo = {
             x: document.getElementById("rotacion-x"),
             y: document.getElementById("rotacion-y"),
@@ -2666,6 +2772,8 @@
         };
         const estadosSimulador = Object.create(null);
         let equipoSimuladorActivo = "escritorio";
+        let modoGuiado = "libre";
+        let pasoActual = 0;
 
         Object.keys(configuracionesSimulador).forEach(function (equipo) {
             estadosSimulador[equipo] = new Set(
@@ -2722,28 +2830,37 @@
         });
 
         let posicionPuntero = null;
-        let escenaArrastrada = false;
-        let movimientoDeArrastre = false;
+        let piezaPuntero = null;
+        let movimientoEscena = false;
+        let suprimirClickPuntero = false;
 
-        cajaVirtual.addEventListener("pointerdown", function (evento) {
-            if (evento.target.closest(".pieza-vista-3d, .controles-perspectiva")) {
+        escenaInteractiva3D.addEventListener("pointerdown", function (evento) {
+            const elementoBajoPuntero = document.elementFromPoint(evento.clientX, evento.clientY);
+            piezaPuntero = elementoBajoPuntero
+                ? elementoBajoPuntero.closest(".pieza-vista-3d")
+                : null;
+            if (!piezaPuntero && evento.target.closest("button, input, a")) {
                 return;
             }
 
             posicionPuntero = { x: evento.clientX, y: evento.clientY };
-            escenaArrastrada = false;
-            cajaVirtual.setPointerCapture(evento.pointerId);
+            movimientoEscena = false;
+            escenaInteractiva3D.setPointerCapture(evento.pointerId);
         });
 
-        cajaVirtual.addEventListener("pointermove", function (evento) {
+        escenaInteractiva3D.addEventListener("pointermove", function (evento) {
             if (!posicionPuntero) {
                 return;
             }
 
             const diferenciaX = evento.clientX - posicionPuntero.x;
             const diferenciaY = evento.clientY - posicionPuntero.y;
-            if (Math.abs(diferenciaX) + Math.abs(diferenciaY) > 2) {
-                escenaArrastrada = true;
+            if (Math.abs(diferenciaX) + Math.abs(diferenciaY) > 5) {
+                movimientoEscena = true;
+            }
+            if (!movimientoEscena) {
+                posicionPuntero = { x: evento.clientX, y: evento.clientY };
+                return;
             }
             perspectiva.y = normalizarAngulo(perspectiva.y + diferenciaX * 0.65);
             perspectiva.x = normalizarAngulo(perspectiva.x - diferenciaY * 0.65);
@@ -2751,31 +2868,55 @@
             actualizarPerspectiva();
         });
 
-        cajaVirtual.addEventListener("pointerup", function (evento) {
-            if (posicionPuntero && cajaVirtual.hasPointerCapture(evento.pointerId)) {
-                cajaVirtual.releasePointerCapture(evento.pointerId);
+        escenaInteractiva3D.addEventListener("pointerup", function (evento) {
+            if (posicionPuntero && escenaInteractiva3D.hasPointerCapture(evento.pointerId)) {
+                escenaInteractiva3D.releasePointerCapture(evento.pointerId);
             }
-            if (escenaArrastrada) {
-                movimientoDeArrastre = true;
+            if (piezaPuntero && !movimientoEscena) {
+                const componente = configuracionesSimulador[equipoSimuladorActivo].componentes.find(function (pieza) {
+                    return pieza.id === piezaPuntero.dataset.componente;
+                });
+                if (componente) {
+                    alternarComponente(componente);
+                }
+            }
+            if (piezaPuntero || movimientoEscena) {
+                suprimirClickPuntero = true;
                 window.setTimeout(function () {
-                    movimientoDeArrastre = false;
+                    suprimirClickPuntero = false;
                 }, 0);
             }
             posicionPuntero = null;
+            piezaPuntero = null;
+            movimientoEscena = false;
         });
 
-        cajaVirtual.addEventListener("pointercancel", function () {
+        escenaInteractiva3D.addEventListener("pointercancel", function () {
             posicionPuntero = null;
+            piezaPuntero = null;
+            movimientoEscena = false;
         });
 
-        cajaVirtual.addEventListener("click", function (evento) {
-            if (movimientoDeArrastre) {
+        escenaInteractiva3D.addEventListener("click", function (evento) {
+            if (suprimirClickPuntero) {
                 evento.preventDefault();
-                evento.stopPropagation();
+                evento.stopImmediatePropagation();
             }
         }, true);
 
-        cajaVirtual.addEventListener("keydown", function (evento) {
+        escenaPiezas.addEventListener("click", function (evento) {
+            const botonPieza = evento.target.closest(".pieza-vista-3d");
+            if (botonPieza) {
+                const componente = configuracionesSimulador[equipoSimuladorActivo].componentes.find(function (pieza) {
+                    return pieza.id === botonPieza.dataset.componente;
+                });
+                if (componente) {
+                    alternarComponente(componente);
+                }
+            }
+        });
+
+        escenaInteractiva3D.addEventListener("keydown", function (evento) {
             const paso = evento.shiftKey ? 15 : 5;
             if (evento.key === "ArrowUp") {
                 perspectiva.x = normalizarAngulo(perspectiva.x - paso);
@@ -2798,16 +2939,126 @@
 
         actualizarPerspectiva();
 
+        function dimensionesEnTexto(equipo, idComponente) {
+            const dimensiones = dimensionesComponentes[equipo][idComponente];
+            return "Dimensiones aproximadas: largo " + dimensiones.largo
+                + " mm, ancho " + dimensiones.ancho
+                + " mm y profundidad " + dimensiones.profundidad + " mm.";
+        }
+
+        function obtenerOrdenGuiado() {
+            const ordenEnsamble = ordenEnsambleSimulador[equipoSimuladorActivo];
+            return modoGuiado === "desensamble"
+                ? ordenEnsamble.slice().reverse()
+                : ordenEnsamble;
+        }
+
+        function actualizarGuia() {
+            const orden = obtenerOrdenGuiado();
+            const componentes = configuracionesSimulador[equipoSimuladorActivo].componentes;
+
+            botonesModoSimulador.forEach(function (boton) {
+                boton.setAttribute("aria-pressed", String(boton.dataset.modoSimulador === modoGuiado));
+            });
+            botonSepararTodo.disabled = modoGuiado !== "libre";
+            botonEnsamblarTodo.disabled = modoGuiado !== "libre";
+
+            if (modoGuiado === "libre") {
+                progresoGuiado.hidden = true;
+                pasoGuiado.textContent = "Exploración libre: selecciona una pieza instalada para separarla o una pieza separada para instalarla.";
+                return;
+            }
+
+            progresoGuiado.hidden = false;
+            progresoGuiado.max = orden.length;
+            progresoGuiado.value = pasoActual;
+
+            if (pasoActual >= orden.length) {
+                pasoGuiado.textContent = "Práctica completada: terminaste el "
+                    + (modoGuiado === "ensamble" ? "ensamble" : "desensamble")
+                    + " guiado de este equipo.";
+                return;
+            }
+
+            const idObjetivo = orden[pasoActual];
+            const componenteObjetivo = componentes.find(function (componente) {
+                return componente.id === idObjetivo;
+            });
+            const accion = modoGuiado === "ensamble" ? "instala" : "separa";
+            pasoGuiado.textContent = "Paso " + (pasoActual + 1) + " de " + orden.length
+                + ": " + accion + " " + componenteObjetivo.nombre
+                + ". Selecciona esa pieza en la escena 3D para continuar.";
+        }
+
+        function iniciarModoGuiado(modo) {
+            modoGuiado = modo;
+            pasoActual = 0;
+            const configuracion = configuracionesSimulador[equipoSimuladorActivo];
+            const componentes = configuracion.componentes;
+
+            if (modo === "desensamble") {
+                componentes.forEach(function (componente) {
+                    estadosSimulador[equipoSimuladorActivo].add(componente.id);
+                });
+                informacionSimulador.textContent = "El equipo se restauró para iniciar el desensamble guiado.";
+            } else if (modo === "ensamble") {
+                estadosSimulador[equipoSimuladorActivo].clear();
+                informacionSimulador.textContent = "Las piezas se separaron para iniciar el ensamble guiado.";
+            } else {
+                informacionSimulador.textContent = "Exploración libre activada. Puedes cambiar el estado de cualquier pieza.";
+            }
+
+            renderizarSimulador();
+        }
+
+        botonesModoSimulador.forEach(function (boton) {
+            boton.addEventListener("click", function () {
+                iniciarModoGuiado(boton.dataset.modoSimulador);
+            });
+        });
+
         function alternarComponente(componente) {
             const instalados = estadosSimulador[equipoSimuladorActivo];
+
+            if (modoGuiado !== "libre") {
+                const orden = obtenerOrdenGuiado();
+                const idObjetivo = orden[pasoActual];
+                if (!idObjetivo) {
+                    pasoGuiado.textContent = "La práctica ya se completó. Elige otro modo si deseas volver a empezar.";
+                    return;
+                }
+                if (componente.id !== idObjetivo) {
+                    const objetivo = configuracionesSimulador[equipoSimuladorActivo].componentes.find(function (pieza) {
+                        return pieza.id === idObjetivo;
+                    });
+                    informacionSimulador.textContent = "En este paso corresponde "
+                        + (modoGuiado === "ensamble" ? "instalar " : "separar ")
+                        + objetivo.nombre + ".";
+                    return;
+                }
+
+                if (modoGuiado === "desensamble") {
+                    instalados.delete(componente.id);
+                } else {
+                    instalados.add(componente.id);
+                }
+                informacionSimulador.textContent = componente.nombre + ". "
+                    + componente.informacion + " " + dimensionesEnTexto(equipoSimuladorActivo, componente.id);
+                pasoActual += 1;
+                renderizarSimulador();
+                return;
+            }
+
             if (instalados.has(componente.id)) {
                 instalados.delete(componente.id);
                 informacionSimulador.textContent = componente.nombre
-                    + " separado del equipo. " + componente.informacion;
+                    + " separado del equipo. " + componente.informacion + " "
+                    + dimensionesEnTexto(equipoSimuladorActivo, componente.id);
             } else {
                 instalados.add(componente.id);
                 informacionSimulador.textContent = componente.nombre
-                    + " instalado en el equipo. " + componente.informacion;
+                    + " instalado en el equipo. " + componente.informacion + " "
+                    + dimensionesEnTexto(equipoSimuladorActivo, componente.id);
             }
             renderizarSimulador();
         }
@@ -2828,6 +3079,8 @@
                 const forma3D = document.createElement("span");
                 const nombre3D = document.createElement("strong");
                 const estado3D = document.createElement("small");
+                const dimensiones3D = document.createElement("small");
+                const dimensiones = dimensionesComponentes[equipoSimuladorActivo][componente.id];
 
                 boton.type = "button";
                 boton.className = "pieza-simulador";
@@ -2842,27 +3095,31 @@
 
                 pieza3D.type = "button";
                 pieza3D.className = "pieza-vista-3d";
+                pieza3D.dataset.componente = componente.id;
                 pieza3D.setAttribute("aria-pressed", String(estaInstalado));
                 pieza3D.setAttribute(
                     "aria-label",
-                    componente.nombre + (estaInstalado ? ", instalada. Pulsa para separar." : ", separada. Pulsa para instalar.")
+                    componente.nombre + ". Largo " + dimensiones.largo
+                        + " mm, ancho " + dimensiones.ancho + " mm, profundidad "
+                        + dimensiones.profundidad + " mm. "
+                        + (estaInstalado ? "Instalada. Pulsa para separar." : "Separada. Pulsa para instalar.")
                 );
                 pieza3D.style.setProperty("--tono-pieza", String((indice * 49 + 350) % 360));
                 forma3D.className = "forma-pieza-3d";
                 forma3D.setAttribute("aria-hidden", "true");
                 nombre3D.textContent = componente.nombre;
                 estado3D.textContent = estaInstalado ? "Instalada" : "Separada";
-                pieza3D.append(forma3D, nombre3D, estado3D);
-                pieza3D.addEventListener("click", function () {
-                    alternarComponente(componente);
-                });
+                dimensiones3D.textContent = "L " + dimensiones.largo + " × A "
+                    + dimensiones.ancho + " × P " + dimensiones.profundidad + " mm";
+                pieza3D.append(forma3D, nombre3D, estado3D, dimensiones3D);
                 escenaPiezas.appendChild(pieza3D);
             });
 
             progresoSimulador.textContent = "Componentes instalados: " + instalados.size
-                + " de " + componentes.length + ". La caja muestra todas las piezas; "
+                + " de " + componentes.length + ". La escena muestra todas las piezas; "
                 + (componentes.length - instalados.size) + " están separadas.";
             escenaRotativa.classList.toggle("modelo-explotado", instalados.size === 0);
+            actualizarGuia();
             botonesSimulador.forEach(function (boton) {
                 boton.setAttribute(
                     "aria-pressed",
@@ -2881,6 +3138,8 @@
         botonesSimulador.forEach(function (boton) {
             boton.addEventListener("click", function () {
                 equipoSimuladorActivo = boton.dataset.equipoSimulador;
+                modoGuiado = "libre";
+                pasoActual = 0;
                 informacionSimulador.textContent = "Seleccionaste "
                     + boton.textContent.trim() + ". Pulsa un componente para instalarlo o retirarlo.";
                 renderizarSimulador();
