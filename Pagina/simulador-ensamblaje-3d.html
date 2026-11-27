@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador 3D de Ensamblaje y Diagnóstico - Competencias Digitales</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    :root {
+      --bg-dark: #140f11;
+      --panel-bg: #1e1619;
+      --panel-soft: #281e22;
+      --accent: #d9434e;
+      --accent-hover: #f0545f;
+      --text-main: #f5f5f5;
+      --text-muted: #b5a8ac;
+      --border: #3a2b30;
+      --success: #2ea043;
+      --warning: #f59e0b;
+    }
+
+    * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+
+    body {
+      margin: 0;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: var(--panel-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .device-selector {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-dark);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .device-btn {
+      padding: 6px 12px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .device-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .hud-stats {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      background: var(--bg-dark);
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .hud-item span { color: var(--accent); font-weight: 700; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    button {
+      background: var(--panel-soft);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 8px 13px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    button:hover { border-color: var(--accent); transform: translateY(-1px); }
+    button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button.diag-active { background: var(--warning); border-color: var(--warning); color: #140f11; }
+    button.btn-report { background: #223828; border-color: var(--success); color: #7ee787; }
+    button.btn-report:hover { background: var(--success); color: #fff; }
+
+    .tabs {
+      display: flex;
+      background: #181214;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 11px 18px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: 0.2s;
+    }
+
+    .tab:hover { color: var(--text-main); }
+    .tab.active {
+      color: var(--text-main);
+      border-bottom-color: var(--accent);
+      background: rgba(217, 67, 78, 0.1);
+    }
+    .tab.completed::after {
+      content: " ✓";
+      color: var(--success);
+      font-weight: 800;
+    }
+
+    /* Banner de Diagnóstico de Fallas */
+    .diag-banner {
+      display: none;
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.18), rgba(217, 67, 78, 0.18));
+      border-bottom: 1px solid var(--warning);
+      padding: 10px 20px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .diag-banner.visible { display: flex; }
+
+    .diag-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .diag-tag {
+      background: var(--warning);
+      color: #140f11;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 285px 1fr 275px;
+      gap: 14px;
+      padding: 14px;
+      flex: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .workspace { grid-template-columns: 1fr; }
+      #viewport3d { height: 420px !important; }
+    }
+
+    .card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card h3 {
+      margin: 0 0 10px 0;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      color: var(--accent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Barra de búsqueda/filtro de piezas */
+    .search-box {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 8px 30px 8px 11px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-size: 12.5px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(217, 67, 78, 0.2);
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      display: none;
+    }
+
+    .parts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      max-height: 320px;
+    }
+
+    .part-item {
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: 0.2s;
+      user-select: none;
+    }
+
+    .part-item:hover { border-color: var(--accent); }
+    .part-item.selected {
+      border-color: var(--accent);
+      background: rgba(217, 67, 78, 0.18);
+      box-shadow: 0 0 12px rgba(217, 67, 78, 0.25);
+    }
+    .part-item.installed {
+      opacity: 0.42;
+      pointer-events: none;
+      text-decoration: line-through;
+    }
+
+    .part-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--bg-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .viewport-wrapper {
+      position: relative;
+      border-radius: 14px;
+      border: 2px solid var(--border);
+      overflow: hidden;
+      background: radial-gradient(circle at center, #261d21 0%, #0e0a0c 100%);
+      display: flex;
+      flex-direction: column;
+    }
+
+    #viewport3d {
+      width: 100%;
+      height: 100%;
+      min-height: 490px;
+      cursor: grab;
+    }
+
+    #viewport3d:active { cursor: grabbing; }
+
+    .camera-bar {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      z-index: 10;
+    }
+
+    .camera-bar button {
+      background: rgba(20, 15, 17, 0.85);
+      backdrop-filter: blur(6px);
+      font-size: 11px;
+      padding: 6px 10px;
+    }
+
+    .viewport-hint {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(20, 15, 17, 0.88);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .inspector {
+      justify-content: space-between;
+      text-align: center;
+    }
+
+    .preview-3d-box {
+      width: 100%;
+      height: 150px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #120d0f;
+      margin: 8px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .angle-meter {
+      display: flex;
+      justify-content: space-around;
+      background: var(--bg-dark);
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .status-bar {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--bg-dark);
+      font-size: 12.5px;
+      line-height: 1.4;
+      color: var(--text-main);
+      border-left: 4px solid var(--accent);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      max-width: 560px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.85);
+    }
+
+    .modal-card h2 { margin-top: 0; color: var(--accent); font-size: 20px; }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .report-stat {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .report-stat .val { font-size: 22px; font-weight: 800; color: var(--text-main); }
+    .report-stat .lbl { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    .error-log {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      max-height: 140px;
+      overflow-y: auto;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .student-input {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-dark);
+      color: var(--text-main);
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <span class="badge">Simulador 3D</span>
+      <div>
+        <strong id="headerTitle" style="font-size: 15px;">Ensamblaje de PC de Escritorio</strong>
+        <div style="font-size: 11px; color: var(--text-muted);">Competencias Digitales · Mantenimiento y Hardware</div>
+      </div>
+    </div>
+
+    <div class="device-selector">
+      <button id="devPc" class="device-btn active" onclick="switchDevice('pc')">🖥️ PC Escritorio</button>
+      <button id="devLaptop" class="device-btn" onclick="switchDevice('laptop')">💻 Portátil</button>
+      <button id="devPrinter" class="device-btn" onclick="switchDevice('printer')">🖨️ Impresora</button>
+    </div>
+
+    <div class="hud-stats">
+      <div class="hud-item">Puntaje: <span id="hudScore">100</span> pts</div>
+      <div class="hud-item">Tiempo: <span id="hudTimer">00:00</span></div>
+      <div class="hud-item">Avance: <span id="hudProgress">0/13</span></div>
+    </div>
+
+    <div class="controls">
+      <button id="btnLearn" class="active" onclick="setMode('learn')">Aprendizaje</button>
+      <button id="btnTest" onclick="setMode('test')">Examen</button>
+      <button id="btnDiag" onclick="setMode('diag')">🔧 Diagnóstico</button>
+      <button class="btn-report" onclick="openReport()">📊 Reporte</button>
+      <button onclick="resetSim()">↺ Reiniciar</button>
+    </div>
+  </header>
+
+  <!-- Panel superior exclusivo del Modo Diagnóstico de Fallas -->
+  <div class="diag-banner" id="diagBanner">
+    <div class="diag-info">
+      <span class="diag-tag">Caso Técnico Activo</span>
+      <div>
+        <strong id="diagSymptomTitle" style="color: #fff;">Síntoma reportado por el usuario:</strong>
+        <span id="diagSymptomText" style="color: #fde68a; margin-left: 6px;">-</span>
+      </div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button onclick="nextDiagCase()">Siguiente Caso ➔</button>
+      <button class="btn-report" onclick="testPowerOn()">⚡ Probar Encendido / Operación</button>
+    </div>
+  </div>
+
+  <div class="tabs" id="phaseTabs"></div>
+
+  <main class="workspace">
+    <!-- Columna izquierda: Buscador + Inventario -->
+    <section class="card">
+      <h3>
+        <span id="invTitle">1. Inventario de Piezas</span>
+        <span id="phaseCount" style="color: var(--text-muted); font-size: 11px;">0/0</span>
+      </h3>
+
+      <div class="search-box">
+        <input type="text" id="partSearchInput" placeholder="Buscar componente o repuesto..." oninput="handleSearch()" />
+        <span class="search-clear" id="searchClearBtn" onclick="clearSearch()">✕</span>
+      </div>
+
+      <div class="parts-list" id="partsList"></div>
+      <div class="status-bar" id="feedbackBox">
+        Selecciona una pieza del inventario, oriéntala en el panel derecho y haz clic en su ubicación dentro del equipo 3D.
+      </div>
+    </section>
+
+    <!-- Centro: Visor 3D -->
+    <section class="viewport-wrapper">
+      <div class="camera-bar" id="cameraBar"></div>
+      <div id="viewport3d"></div>
+      <div class="viewport-hint">
+        <span>🖱️ Clic izq: Instalar/Reemplazar | Arrastrar: Orbitar | Rueda: Zoom</span>
+        <span id="hoverLabel" style="color: #ff9800; font-weight: 700;"></span>
+      </div>
+    </section>
+
+    <!-- Columna derecha: Inspector 3D -->
+    <section class="card inspector">
+      <div>
+        <h3>2. Alineación y Orientación 3D</h3>
+        <p style="font-size: 11.5px; color: var(--text-muted); margin: 0 0 6px 0;">
+          Alinea la muesca, guías o conectores antes de insertar el componente.
+        </p>
+        <div class="preview-3d-box" id="preview3d"></div>
+        <div id="partDesc" style="font-size: 13px; font-weight: 700; margin-top: 4px;">Ninguna pieza seleccionada</div>
+        <div id="partTip" style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px; min-height: 32px;">
+          Haz clic sobre un componente a la izquierda para inspeccionarlo.
+        </div>
+      </div>
+
+      <div>
+        <div style="display: flex; gap: 8px; justify-content: center; margin-top: 10px;">
+          <button onclick="rotatePart(-90)" style="flex:1;">↺ Girar -90°</button>
+          <button onclick="rotatePart(90)" style="flex:1;">↻ Girar +90°</button>
+        </div>
+        <div class="angle-meter">
+          <div>Ángulo: <strong id="angleLabel" style="color: var(--accent);">0°</strong></div>
+          <div>Objetivo: <strong id="targetAngleLabel">-</strong></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de Reporte -->
+  <div class="modal-overlay" id="reportModal">
+    <div class="modal-card">
+      <h2>Reporte de Evaluación Técnica</h2>
+      <p id="reportDeviceSubtitle" style="font-size: 13px; color: var(--text-muted); margin-top: -6px;">
+        Equipo evaluado: PC de Escritorio
+      </p>
+
+      <input type="text" id="studentName" class="student-input" placeholder="Escribe el nombre completo del estudiante o aprendiz..." />
+
+      <div class="report-grid">
+        <div class="report-stat">
+          <div class="val" id="repGrade" style="color: var(--success);">5.0 / 5.0</div>
+          <div class="lbl">Calificación Final</div>
+        </div>
+        <div class="report-stat">
+          <div class="val" id="repTime">00:00</div>
+          <div class="lbl">Tiempo Total</div>
+        </div>
+        <div class="report-stat">
+          <div class="val" id="repErrors" style="color: var(--accent);">0</div>
+          <div class="lbl">Intentos Fallidos</div>
+        </div>
+      </div>
+
+      <div style="font-size: 12px; font-weight: 700; margin-bottom: 6px;">Bitácora de Diagnóstico:</div>
+      <div class="error-log" id="repLog">Sin errores registrados. Procedimiento técnico impecable.</div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button onclick="closeReport()">Cerrar</button>
+        <button class="btn-report" onclick="downloadCertificate()">⬇ Descargar Acta (.txt)</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. CATÁLOGO DE EQUIPOS Y CASOS DE FALLA
+    // ==========================================
+    const devicesConfig = {
+      pc: {
+        title: "PC de Escritorio (ATX)",
+        cameras: [
+          { key: "iso", label: "🎥 General", pos: [2.8, 1.8, 5.2], target: [0, 0, -0.3] },
+          { key: "board", label: "🔍 Placa / CPU", pos: [0.2, 0.3, 2.7], target: [0.2, 0.2, -0.6] },
+          { key: "psu", label: "⚡ Fuente", pos: [-2.4, 1.6, 2.8], target: [-1.4, 1.2, -0.4] },
+          { key: "drives", label: "💾 Unidades", pos: [2.6, -0.4, 2.9], target: [1.2, -0.3, -0.4] }
+        ],
+        diagCases: [
+          {
+            symptom: "El equipo enciende los ventiladores pero NO da imagen en el monitor y emite 3 pitidos largos (error de memoria).",
+            faultyIds: ["ram1"],
+            hint: "Revisa los módulos de memoria DDR4 en la placa base y reemplaza el módulo defectuoso con la orientación correcta."
+          },
+          {
+            symptom: "El PC se apaga repentinamente a los 20 segundos por sobrecalentamiento térmico del procesador.",
+            faultyIds: ["paste", "cooler"],
+            hint: "Verifica el sistema de refrigeración del CPU: debes renovar la pasta térmica y reanclar el disipador."
+          },
+          {
+            symptom: "Al presionar el botón de encendido, el equipo no hace absolutamente nada (sin energía en placa).",
+            faultyIds: ["psu", "atx24"],
+            hint: "Comprueba la fuente de poder ATX y el cable principal de 24 pines hacia la placa base."
+          }
+        ],
+        phases: [
+          {
+            name: "1. Fuente de Alimentación",
+            camera: "psu",
+            parts: [
+              { id: "psu", name: "Fuente ATX 650W", icon: "⚡", targetAngle: 90, tip: "Orienta la rejilla de ventilación hacia el chasis.", slotPos: [-1.45, 1.35, -0.45], slotSize: [1.1, 0.85, 1.1], color: 0x2b2b2b },
+              { id: "psu_screws", name: "Tornillos Fuente (x4)", icon: "🔩", targetAngle: 0, requires: "psu", tip: "Asegura la fuente al chasis posterior.", slotPos: [-2.02, 1.35, -0.45], slotSize: [0.15, 0.85, 1.1], color: 0xc0c0c0 }
+            ]
+          },
+          {
+            name: "2. Placa Base (CPU y RAM)",
+            camera: "board",
+            parts: [
+              { id: "cpu", name: "Procesador (CPU)", icon: "🔲", targetAngle: 90, tip: "Alinea la muesca dorada con el zócalo LGA.", slotPos: [0.15, 0.65, -0.68], slotSize: [0.55, 0.55, 0.14], color: 0x3b82f6 },
+              { id: "paste", name: "Pasta Térmica", icon: "💧", targetAngle: 0, requires: "cpu", tip: "Aplica pasta térmica sobre el procesador.", slotPos: [0.15, 0.65, -0.59], slotSize: [0.35, 0.35, 0.08], color: 0x9ca3af },
+              { id: "cooler", name: "Disipador + Ventilador", icon: "🌀", targetAngle: 0, requires: "paste", tip: "Ancla el disipador sobre la pasta térmica.", slotPos: [0.15, 0.65, -0.35], slotSize: [0.72, 0.72, 0.42], color: 0x1f2937 },
+              { id: "ram1", name: "Memoria RAM DDR4 (A1)", icon: "📟", targetAngle: 180, tip: "Haz coincidir la muesca con la ranura DIMM A1.", slotPos: [0.95, 0.65, -0.52], slotSize: [0.12, 1.05, 0.36], color: 0x10b981 },
+              { id: "ram2", name: "Memoria RAM DDR4 (B1)", icon: "📟", targetAngle: 180, tip: "Instala el segundo módulo en Dual Channel.", slotPos: [1.18, 0.65, -0.52], slotSize: [0.12, 1.05, 0.36], color: 0x10b981 }
+            ]
+          },
+          {
+            name: "3. Tarjetas Adaptadoras",
+            camera: "board",
+            parts: [
+              { id: "gpu", name: "Tarjeta Gráfica PCIe x16", icon: "🎮", targetAngle: 0, tip: "Inserta en la ranura PCI Express principal.", slotPos: [-0.25, -0.35, -0.32], slotSize: [1.45, 0.16, 0.75], color: 0xd9434e },
+              { id: "nic", name: "Tarjeta de Red / Wi-Fi", icon: "📡", targetAngle: 0, tip: "Coloca la tarjeta de red en la ranura PCIe x1.", slotPos: [-0.45, -0.82, -0.45], slotSize: [0.85, 0.12, 0.5], color: 0x059669 }
+            ]
+          },
+          {
+            name: "4. Unidades Internas",
+            camera: "drives",
+            parts: [
+              { id: "ssd", name: "Unidad SSD SATA 2.5\"", icon: "💾", targetAngle: 270, tip: "Orienta los conectores SATA hacia el interior.", slotPos: [1.55, -0.75, -0.35], slotSize: [0.65, 0.9, 0.25], color: 0x374151 }
+            ]
+          },
+          {
+            name: "5. Cableado y Tapa",
+            camera: "drives",
+            parts: [
+              { id: "atx24", name: "Cable ATX 24 Pines", icon: "🔌", targetAngle: 0, tip: "Conecta la energía principal en la placa base.", slotPos: [1.42, 0.55, -0.55], slotSize: [0.18, 0.65, 0.35], color: 0xf59e0b },
+              { id: "sata", name: "Cable de Datos SATA", icon: "〰️", targetAngle: 0, requires: "ssd", tip: "Conecta el puerto SATA a la unidad SSD.", slotPos: [1.45, -0.25, -0.48], slotSize: [0.35, 0.35, 0.25], color: 0xef4444 },
+              { id: "panel", name: "Tapa Lateral del Gabinete", icon: "🛡️", targetAngle: 0, requires: "sata", tip: "Cierra el gabinete una vez terminado.", slotPos: [0, 0, 0.72], slotSize: [4.1, 3.5, 0.08], color: 0x262626 }
+            ]
+          }
+        ]
+      },
+
+      laptop: {
+        title: "Portátil (Laptop)",
+        cameras: [
+          { key: "iso", label: "🎥 Vista General", pos: [0, 2.9, 3.8], target: [0, 0, 0] },
+          { key: "slots", label: "🔍 RAM y SSD", pos: [0.5, 2.2, 2.2], target: [0.4, 0.1, 0.1] },
+          { key: "cooler", label: "🌀 Refrigeración", pos: [-0.8, 2.2, 2.2], target: [-0.6, 0.1, -0.2] }
+        ],
+        diagCases: [
+          {
+            symptom: "El portátil solo funciona conectado al cargador; al desconectarlo se apaga de inmediato (0% de carga).",
+            faultyIds: ["lap_bat"],
+            hint: "Reemplaza la batería Li-Ion interna respetando la orientación de los conectores."
+          },
+          {
+            symptom: "El sistema muestra pantalla azul 'No Bootable Device Found' (no detecta unidad de arranque).",
+            faultyIds: ["lap_ssd"],
+            hint: "Inspecciona y reemplaza la unidad SSD NVMe M.2 2280."
+          }
+        ],
+        phases: [
+          {
+            name: "1. Batería y Almacenamiento",
+            camera: "slots",
+            parts: [
+              { id: "lap_bat", name: "Batería Li-Ion Interna", icon: "🔋", targetAngle: 0, tip: "Alinea los pines de contacto de la batería.", slotPos: [0, 0.12, 0.78], slotSize: [2.6, 0.14, 0.55], color: 0x1f2937 },
+              { id: "lap_ssd", name: "SSD NVMe M.2 2280", icon: "⚡", targetAngle: 90, tip: "Inserta el módulo M.2 en ángulo.", slotPos: [0.95, 0.12, 0.05], slotSize: [0.35, 0.08, 0.95], color: 0x059669 }
+            ]
+          },
+          {
+            name: "2. Memoria SO-DIMM y Disipación",
+            camera: "cooler",
+            parts: [
+              { id: "lap_ram1", name: "RAM DDR4 SO-DIMM (Slot 1)", icon: "📟", targetAngle: 180, tip: "Alinea la muesca del módulo SO-DIMM.", slotPos: [0.25, 0.12, -0.15], slotSize: [0.75, 0.08, 0.36], color: 0x10b981 },
+              { id: "lap_ram2", name: "RAM DDR4 SO-DIMM (Slot 2)", icon: "📟", targetAngle: 180, tip: "Coloca el segundo módulo de memoria.", slotPos: [0.25, 0.12, 0.32], slotSize: [0.75, 0.08, 0.36], color: 0x10b981 },
+              { id: "lap_fan", name: "Cooler + Heatpipe Cobre", icon: "🌀", targetAngle: 90, tip: "Coloca el disipador de cobre sobre CPU/GPU.", slotPos: [-0.85, 0.15, -0.1], slotSize: [1.15, 0.14, 1.15], color: 0xd97706 }
+            ]
+          },
+          {
+            name: "3. Carcasa Inferior y Bisagras",
+            camera: "iso",
+            parts: [
+              { id: "lap_bottom", name: "Carcasa Inferior (Bottom Case)", icon: "🛡️", targetAngle: 0, requires: "lap_fan", tip: "Cierra la cubierta inferior.", slotPos: [0, 0.24, 0.05], slotSize: [3.6, 0.08, 2.4], color: 0x262626 },
+              { id: "lap_screws", name: "Tornillos Carcasa (x8)", icon: "🔩", targetAngle: 0, requires: "lap_bottom", tip: "Asegura la tapa inferior.", slotPos: [0, 0.3, 0.05], slotSize: [3.2, 0.04, 2.0], color: 0xd4d4d8 }
+            ]
+          }
+        ]
+      },
+
+      printer: {
+        title: "Impresora Multifuncional",
+        cameras: [
+          { key: "iso", label: "🎥 Vista General", pos: [2.6, 2.0, 4.4], target: [0, 0.2, 0] },
+          { key: "toner", label: "🖨️ Unidad de Tóner", pos: [0, 2.3, 2.5], target: [0, 0.4, 0] },
+          { key: "tray", label: "📄 Bandeja de Papel", pos: [1.8, 0.8, 2.8], target: [0, -0.3, 0.4] }
+        ],
+        diagCases: [
+          {
+            symptom: "Las hojas salen completamente en blanco o con manchas verticales oscuras.",
+            faultyIds: ["prt_drum", "prt_toner"],
+            hint: "Reemplaza la unidad de tambor fotoconductor y el cartucho de tóner."
+          },
+          {
+            symptom: "Error en pantalla de impresora: 'Sin papel en bandeja o atasco en alimentación'.",
+            faultyIds: ["prt_paper", "prt_tray"],
+            hint: "Revisa la carga de papel A4 y encaja correctamente la bandeja inferior."
+          }
+        ],
+        phases: [
+          {
+            name: "1. Consumibles y Unidad de Imagen",
+            camera: "toner",
+            parts: [
+              { id: "prt_drum", name: "Unidad de Tambor / Fotoconductor", icon: "🟣", targetAngle: 0, tip: "No expongas el cilindro a luz directa.", slotPos: [-0.45, 0.55, 0], slotSize: [1.2, 0.55, 0.7], color: 0x6d28d9 },
+              { id: "prt_toner", name: "Cartucho de Tóner / Tinta", icon: "🖤", targetAngle: 180, requires: "prt_drum", tip: "Desliza el cartucho siguiendo las guías.", slotPos: [0.65, 0.55, 0], slotSize: [1.1, 0.55, 0.7], color: 0xd9434e }
+            ]
+          },
+          {
+            name: "2. Bandeja y Alimentación de Papel",
+            camera: "tray",
+            parts: [
+              { id: "prt_paper", name: "Resma de Papel A4 / Carta", icon: "📄", targetAngle: 90, tip: "Alinea las hojas sin superar el límite.", slotPos: [0, -0.35, 0.35], slotSize: [1.7, 0.16, 1.3], color: 0xf3f4f6 },
+              { id: "prt_tray", name: "Bandeja Inferior Extraíble", icon: "📥", targetAngle: 0, requires: "prt_paper", tip: "Desliza la bandeja hasta hacer clic.", slotPos: [0, -0.45, 0.35], slotSize: [2.1, 0.14, 1.6], color: 0x374151 }
+            ]
+          },
+          {
+            name: "3. Cubierta Superior y Cableado",
+            camera: "iso",
+            parts: [
+              { id: "prt_top", name: "Cubierta Superior / Escáner", icon: "🛡️", targetAngle: 0, requires: "prt_tray", tip: "Cierra la tapa superior.", slotPos: [0, 0.92, 0], slotSize: [2.5, 0.12, 1.8], color: 0x262626 },
+              { id: "prt_cable", name: "Cable USB + Alimentación AC", icon: "🔌", targetAngle: 0, requires: "prt_top", tip: "Conecta energía y cable de datos.", slotPos: [-1.35, 0.1, -0.4], slotSize: [0.2, 0.5, 0.45], color: 0xf59e0b }
+            ]
+          }
+        ]
+      }
+    };
+
+    // ==========================================
+    // 2. ESTADO GLOBAL
+    // ==========================================
+    let currentDeviceKey = "pc";
+    let currentPhase = 0;
+    let selectedPart = null;
+    let currentAngle = 0;
+    let installedIds = new Set();
+    let faultyIds = new Set(); // Piezas averiadas en modo Diagnóstico
+    let currentDiagIndex = 0;
+    let mode = "learn"; // "learn" | "test" | "diag"
+    let searchQuery = "";
+    let score = 100;
+    let errorCount = 0;
+    let errorLogs = [];
+    let secondsElapsed = 0;
+    let timerInterval = null;
+
+    function getDevice() { return devicesConfig[currentDeviceKey]; }
+    function getPhases() { return getDevice().phases; }
+    function getTotalParts() { return getPhases().reduce((acc, p) => acc + p.parts.length, 0); }
+
+    // ==========================================
+    // 3. ESCENA 3D PRINCIPAL (THREE.JS)
+    // ==========================================
+    const container = document.getElementById("viewport3d");
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.minDistance = 1.8;
+    controls.maxDistance = 9;
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.68));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    dirLight.position.set(4, 6, 5);
+    scene.add(dirLight);
+    const rimLight = new THREE.DirectionalLight(0xd9434e, 0.45);
+    rimLight.position.set(-5, -3, 2);
+    scene.add(rimLight);
+
+    const deviceGroup = new THREE.Group();
+    scene.add(deviceGroup);
+
+    const slotMeshes = {};
+    const installedMeshes = {};
+    let animatedSpinMesh = null;
+
+    function buildBaseChassis3D() {
+      while (deviceGroup.children.length > 0) {
+        deviceGroup.remove(deviceGroup.children[0]);
+      }
+      for (const k in slotMeshes) delete slotMeshes[k];
+      for (const k in installedMeshes) delete installedMeshes[k];
+      animatedSpinMesh = null;
+
+      const caseMat = new THREE.MeshStandardMaterial({ color: 0x1b1b1e, metalness: 0.55, roughness: 0.4 });
+
+      if (currentDeviceKey === "pc") {
+        const backPlate = new THREE.Mesh(new THREE.BoxGeometry(4.2, 3.6, 0.1), caseMat);
+        backPlate.position.z = -0.82;
+        deviceGroup.add(backPlate);
+
+        const topPanel = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.1, 1.6), caseMat);
+        topPanel.position.set(0, 1.8, -0.05);
+        deviceGroup.add(topPanel);
+
+        const bottomPanel = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.1, 1.6), caseMat);
+        bottomPanel.position.set(0, -1.8, -0.05);
+        deviceGroup.add(bottomPanel);
+
+        const rearPanel = new THREE.Mesh(new THREE.BoxGeometry(0.1, 3.6, 1.6), caseMat);
+        rearPanel.position.set(-2.05, 0, -0.05);
+        deviceGroup.add(rearPanel);
+
+        const frontPanel = new THREE.Mesh(new THREE.BoxGeometry(0.12, 3.6, 1.6), new THREE.MeshStandardMaterial({ color: 0x121214 }));
+        frontPanel.position.set(2.05, 0, -0.05);
+        deviceGroup.add(frontPanel);
+
+        const mobo = new THREE.Mesh(new THREE.BoxGeometry(2.6, 2.4, 0.08), new THREE.MeshStandardMaterial({ color: 0x14261f, roughness: 0.5 }));
+        mobo.position.set(0.1, 0.1, -0.73);
+        deviceGroup.add(mobo);
+
+        const socketBase = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.62, 0.06), new THREE.MeshStandardMaterial({ color: 0xd4d4d8, metalness: 0.7 }));
+        socketBase.position.set(0.15, 0.65, -0.68);
+        deviceGroup.add(socketBase);
+      } else if (currentDeviceKey === "laptop") {
+        const baseTray = new THREE.Mesh(new THREE.BoxGeometry(3.7, 0.14, 2.5), caseMat);
+        baseTray.position.set(0, 0, 0.05);
+        deviceGroup.add(baseTray);
+
+        const mainBoard = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.05, 1.8), new THREE.MeshStandardMaterial({ color: 0x14261f }));
+        mainBoard.position.set(0, 0.09, -0.1);
+        deviceGroup.add(mainBoard);
+
+        const lidGroup = new THREE.Group();
+        lidGroup.position.set(0, 0.08, -1.2);
+        lidGroup.rotation.x = -0.35;
+        const lidBack = new THREE.Mesh(new THREE.BoxGeometry(3.7, 2.35, 0.08), caseMat);
+        lidBack.position.set(0, 1.17, -0.04);
+        const screen = new THREE.Mesh(new THREE.BoxGeometry(3.45, 2.1, 0.02), new THREE.MeshStandardMaterial({ color: 0x1e293b, emissive: 0x1e1619 }));
+        screen.position.set(0, 1.17, 0.01);
+        lidGroup.add(lidBack, screen);
+        deviceGroup.add(lidGroup);
+      } else if (currentDeviceKey === "printer") {
+        const base = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.16, 1.9), caseMat);
+        base.position.set(0, -0.6, 0);
+        deviceGroup.add(base);
+
+        const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.5, 1.9), caseMat);
+        leftWall.position.set(-1.24, 0.15, 0);
+        deviceGroup.add(leftWall);
+
+        const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.5, 1.9), caseMat);
+        rightWall.position.set(1.24, 0.15, 0);
+        deviceGroup.add(rightWall);
+
+        const backWall = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.5, 0.12), caseMat);
+        backWall.position.set(0, 0.15, -0.9);
+        deviceGroup.add(backWall);
+      }
+    }
+
+    function createComponentMaterial(color, isFaulty = false, options = {}) {
+      return new THREE.MeshStandardMaterial({
+        color: isFaulty ? 0x7f1d1d : color,
+        emissive: isFaulty ? 0x450a0a : 0x000000,
+        metalness: options.metalness ?? 0.35,
+        roughness: options.roughness ?? (isFaulty ? 0.85 : 0.4),
+        transparent: options.transparent ?? false,
+        opacity: options.opacity ?? 1
+      });
+    }
+
+    function addPartBox(group, size, color, position, isFaulty = false, options = {}) {
+      const mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(...size),
+        createComponentMaterial(color, isFaulty, options)
+      );
+      mesh.position.set(...position);
+      group.add(mesh);
+      return mesh;
+    }
+
+    function addPartCylinder(group, radius, length, color, position, isFaulty = false, alongX = false, alongY = false) {
+      const mesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(radius, radius, length, 20),
+        createComponentMaterial(color, isFaulty, { metalness: 0.55 })
+      );
+      if (alongX) {
+        mesh.rotation.z = Math.PI / 2;
+      } else if (!alongY) {
+        mesh.rotation.x = Math.PI / 2;
+      }
+      mesh.position.set(...position);
+      group.add(mesh);
+      return mesh;
+    }
+
+    function addFanDetails(group, radius, depth, isFaulty, position = [0, 0, 0], axisY = false) {
+      const fan = new THREE.Group();
+      fan.position.set(...position);
+      if (axisY) fan.rotation.x = -Math.PI / 2;
+
+      const frame = new THREE.Mesh(
+        new THREE.TorusGeometry(radius * 0.92, Math.max(radius * 0.08, 0.015), 8, 24),
+        createComponentMaterial(0x9ca3af, isFaulty, { metalness: 0.55 })
+      );
+      fan.add(frame);
+
+      for (let index = 0; index < 5; index++) {
+        const blade = addPartBox(
+          fan,
+          [radius * 0.68, radius * 0.18, Math.max(depth * 0.12, 0.018)],
+          0x64717a,
+          [radius * 0.25, 0, 0],
+          isFaulty
+        );
+        blade.rotation.z = index * (Math.PI * 2 / 5);
+      }
+
+      const hub = addPartCylinder(
+        fan,
+        radius * 0.22,
+        Math.max(depth * 0.2, 0.025),
+        0xd9434e,
+        [0, 0, depth * 0.08],
+        isFaulty
+      );
+      group.add(fan);
+      if (!isFaulty) animatedSpinMesh = fan;
+      return hub;
+    }
+
+    function addCable(group, points, radius, color, isFaulty) {
+      const curve = new THREE.CatmullRomCurve3(points.map(point => new THREE.Vector3(...point)));
+      const cable = new THREE.Mesh(
+        new THREE.TubeGeometry(curve, 24, radius, 8, false),
+        createComponentMaterial(color, isFaulty, { metalness: 0.12, roughness: 0.65 })
+      );
+      group.add(cable);
+      return cable;
+    }
+
+    function createComponentMesh(part, isFaulty = false) {
+      const group = new THREE.Group();
+      const [width, height, depth] = part.slotSize;
+      const box = (size, color, position = [0, 0, 0], options = {}) =>
+        addPartBox(group, size, color, position, isFaulty, options);
+      const cylinder = (radius, length, color, position = [0, 0, 0], alongX = false, alongY = false) =>
+        addPartCylinder(group, radius, length, color, position, isFaulty, alongX, alongY);
+      const screwColor = 0xb9c2c8;
+
+      if (part.id === "psu") {
+        box([width * 0.96, height * 0.96, depth * 0.92], 0x252a30);
+        cylinder(Math.min(width, height) * 0.29, depth * 0.08, 0x101419, [0, 0, depth * 0.5]);
+        addFanDetails(group, Math.min(width, height) * 0.22, depth * 0.08, isFaulty, [0, 0, depth * 0.55]);
+        box([width * 0.62, height * 0.08, depth * 0.025], 0x77838a, [0, height * 0.37, depth * 0.48]);
+      } else if (part.id === "psu_screws") {
+        [[-0.32, -0.36], [0.32, -0.36], [-0.32, 0.36], [0.32, 0.36]].forEach(([y, z]) => {
+          cylinder(Math.min(width, height) * 0.18, width * 0.72, screwColor, [0, height * y, depth * z], true);
+        });
+      } else if (part.id === "cpu") {
+        box([width * 0.96, height * 0.96, depth * 0.35], 0x202832, [0, 0, -depth * 0.18]);
+        box([width * 0.72, height * 0.72, depth * 0.22], 0xb8c3c9, [0, 0, depth * 0.16], { metalness: 0.72, roughness: 0.25 });
+        box([width * 0.28, height * 0.08, depth * 0.05], 0xe9b84f, [-width * 0.2, -height * 0.34, depth * 0.3]);
+      } else if (part.id === "paste") {
+        box([width * 0.84, height * 0.17, depth * 0.17], 0x46525c);
+        const paste = new THREE.Mesh(
+          new THREE.SphereGeometry(Math.min(width, height) * 0.2, 16, 12),
+          createComponentMaterial(0xd8dde1, isFaulty, { metalness: 0.1, roughness: 0.25 })
+        );
+        paste.scale.set(1.25, 0.45, 0.45);
+        paste.position.z = depth * 0.2;
+        group.add(paste);
+      } else if (part.id === "cooler" || part.id === "lap_fan") {
+        if (part.id === "lap_fan") {
+          box([width * 0.92, height * 0.72, depth * 0.92], 0x9b5729);
+          addFanDetails(group, Math.min(width, depth) * 0.29, height * 0.2, isFaulty, [-width * 0.18, height * 0.52, 0], true);
+          addCable(group, [[-width * 0.1, height * 0.51, -depth * 0.28], [width * 0.05, height * 0.55, -depth * 0.12], [width * 0.12, height * 0.51, depth * 0.12], [width * 0.32, height * 0.51, depth * 0.3]], 0.035, 0xd97706, isFaulty);
+          addCable(group, [[-width * 0.45, 0, -depth * 0.35], [-width * 0.3, height * 0.12, -depth * 0.42], [-width * 0.12, height * 0.12, -depth * 0.42]], 0.022, 0x303941, isFaulty);
+        } else {
+          const fanRadius = Math.min(width, height) * 0.35;
+          box([width * 0.92, height * 0.92, depth * 0.2], 0x303941, [0, 0, -depth * 0.28]);
+          for (let index = -2; index <= 2; index++) {
+            box([width * 0.08, height * 0.86, depth * 0.18], 0x7b858b, [index * width * 0.16, 0, -depth * 0.08]);
+          }
+          addFanDetails(group, fanRadius, depth * 0.16, isFaulty, [0, 0, depth * 0.26]);
+        }
+      } else if (part.id.startsWith("ram") || part.id.startsWith("lap_ram")) {
+        const laptopMemory = part.id.startsWith("lap_ram");
+        const boardColor = laptopMemory ? 0x176b4a : 0x155c42;
+        box([width * 0.88, height * 0.9, depth * 0.86], boardColor);
+        const chipCount = laptopMemory ? 5 : 6;
+        for (let index = 0; index < chipCount; index++) {
+          if (laptopMemory) {
+            const x = -width * 0.34 + index * (width * 0.68 / (chipCount - 1));
+            box([width * 0.09, height * 0.24, depth * 0.55], 0x17232b, [x, height * 0.56, 0]);
+            box([width * 0.035, height * 0.08, depth * 0.72], 0xd5a83f, [x, height * 0.22, depth * 0.07]);
+          } else {
+            const y = -height * 0.36 + index * (height * 0.72 / (chipCount - 1));
+            box([width * 0.08, height * 0.08, depth * 0.55], 0x17232b, [width * 0.46, y, 0]);
+            box([width * 0.2, height * 0.035, depth * 0.72], 0xd5a83f, [-width * 0.18, y, depth * 0.07]);
+          }
+        }
+      } else if (part.id === "gpu") {
+        box([width * 0.96, height * 0.28, depth * 0.9], 0x222b33);
+        box([width * 0.86, height * 0.08, depth * 0.74], 0x9da8ae, [0, -height * 0.35, 0]);
+        const fanRadius = Math.min(width, depth) * 0.24;
+        addFanDetails(group, fanRadius, height * 0.22, isFaulty, [-width * 0.25, height * 0.44, 0], true);
+        addFanDetails(group, fanRadius, height * 0.22, isFaulty, [width * 0.25, height * 0.44, 0], true);
+        box([width * 0.26, height * 0.12, depth * 0.2], 0xd5a83f, [0, -height * 0.48, depth * 0.34]);
+      } else if (part.id === "nic") {
+        box([width * 0.94, height * 0.32, depth * 0.9], 0x126247);
+        box([width * 0.22, height * 0.28, depth * 0.6], 0x25333b, [width * 0.22, height * 0.28, 0]);
+        box([width * 0.12, height * 0.72, depth * 0.68], 0xb7c1c6, [-width * 0.45, 0, 0], { metalness: 0.7 });
+        box([width * 0.2, height * 0.28, depth * 0.32], 0xc98d36, [width * 0.15, -height * 0.45, 0]);
+      } else if (part.id === "ssd" || part.id === "lap_ssd") {
+        box([width * 0.96, height * 0.96, depth * 0.42], part.id === "ssd" ? 0x343b42 : 0x176b4a);
+        box([width * 0.62, height * 0.5, depth * 0.12], 0x111a21, [0, 0, depth * 0.28]);
+        if (part.id === "lap_ssd") {
+          box([width * 0.15, height * 0.9, depth * 0.3], 0xd8b85b, [width * 0.4, 0, depth * 0.2]);
+          cylinder(width * 0.08, depth * 0.15, screwColor, [-width * 0.4, 0, depth * 0.25]);
+        } else {
+          box([width * 0.22, height * 0.48, depth * 0.32], 0xb9c2c8, [width * 0.42, 0, 0]);
+          cylinder(Math.min(width, height) * 0.035, depth * 0.08, screwColor, [-width * 0.38, height * 0.38, depth * 0.25]);
+          cylinder(Math.min(width, height) * 0.035, depth * 0.08, screwColor, [-width * 0.38, -height * 0.38, depth * 0.25]);
+        }
+      } else if (part.id === "atx24" || part.id === "sata" || part.id === "prt_cable") {
+        const cableColor = part.id === "sata" ? 0xef4444 : 0x2b3035;
+        addCable(
+          group,
+          [[-width * 0.35, -height * 0.4, 0], [width * 0.3, -height * 0.12, depth * 0.18], [-width * 0.22, height * 0.18, depth * 0.32], [width * 0.35, height * 0.4, 0]],
+          Math.max(Math.min(width, height, depth) * 0.09, 0.025),
+          cableColor,
+          isFaulty
+        );
+        box([width * 0.52, height * 0.2, depth * 0.25], part.id === "atx24" ? 0xe7d9bb : 0x343b42, [-width * 0.32, -height * 0.42, 0]);
+        box([width * 0.38, height * 0.2, depth * 0.25], 0x343b42, [width * 0.34, height * 0.42, 0]);
+      } else if (part.id === "panel" || part.id === "lap_bottom" || part.id === "prt_top") {
+        const panelColor = part.id === "prt_top" ? 0x30343a : 0x262b30;
+        box([width * 0.98, height * 0.98, depth * 0.2], panelColor, [0, 0, 0], { transparent: true, opacity: part.id === "panel" ? 0.38 : 0.9, metalness: 0.65 });
+        if (part.id === "panel") {
+          for (let index = -3; index <= 3; index++) {
+            box([width * 0.012, height * 0.7, depth * 0.08], 0x7d858a, [index * width * 0.045, 0, depth * 0.14]);
+          }
+          addFanDetails(group, Math.min(height, width) * 0.22, depth * 0.12, isFaulty, [width * 0.28, -height * 0.18, depth * 0.16]);
+        } else if (part.id === "lap_bottom") {
+          for (let index = -3; index <= 3; index++) {
+            box([width * 0.035, height * 0.035, depth * 0.12], 0x69757d, [index * width * 0.065, height * 0.28, depth * 0.16]);
+          }
+        } else {
+          box([width * 0.68, height * 0.68, depth * 0.08], 0x59636a, [0, 0, depth * 0.16], { transparent: true, opacity: 0.55 });
+        }
+      } else if (part.id === "lap_bat") {
+        for (let index = 0; index < 3; index++) {
+          box([width * 0.3, height * 0.7, depth * 0.82], 0x252d34, [-width * 0.32 + index * width * 0.32, 0, 0]);
+        }
+        box([width * 0.13, height * 0.55, depth * 0.9], 0xd1ae4e, [width * 0.46, 0, 0]);
+        box([width * 0.22, height * 0.25, depth * 0.08], 0x2e8b61, [0, 0, depth * 0.48]);
+      } else if (part.id === "lap_screws") {
+        for (let row = -1; row <= 1; row++) {
+          for (let column = -2; column <= 2; column++) {
+            if (Math.abs(row) === 1 && Math.abs(column) === 2) continue;
+            cylinder(Math.min(width, depth) * 0.018, height * 0.8, screwColor, [column * width * 0.19, 0, row * depth * 0.34], false, true);
+          }
+        }
+      } else if (part.id === "prt_drum") {
+        cylinder(Math.min(height, depth) * 0.43, width * 0.82, 0x2f9b72, [0, 0, 0], true);
+        cylinder(Math.min(height, depth) * 0.47, width * 0.08, 0x20272d, [-width * 0.43, 0, 0], true);
+        cylinder(Math.min(height, depth) * 0.47, width * 0.08, 0x20272d, [width * 0.43, 0, 0], true);
+      } else if (part.id === "prt_toner") {
+        box([width * 0.9, height * 0.78, depth * 0.84], 0x20262c);
+        box([width * 0.42, height * 0.1, depth * 0.4], 0xd9434e, [0, height * 0.45, 0]);
+        box([width * 0.62, height * 0.1, depth * 0.08], 0x939da3, [0, 0, depth * 0.48]);
+      } else if (part.id === "prt_paper") {
+        for (let index = 0; index < 5; index++) {
+          box([width * 0.94, height * 0.12, depth * 0.94], 0xe8edf0, [0, -height * 0.4 + index * height * 0.18, 0], { roughness: 0.8 });
+        }
+        box([width * 0.28, height * 0.035, depth * 0.08], 0xb8c8d0, [width * 0.28, height * 0.47, -depth * 0.34]);
+      } else if (part.id === "prt_tray") {
+        box([width * 0.94, height * 0.18, depth * 0.94], 0x343c43, [0, -height * 0.28, 0]);
+        box([width * 0.94, height * 0.12, depth * 0.08], 0x606b73, [0, height * 0.28, depth * 0.42]);
+        box([width * 0.08, height * 0.28, depth * 0.82], 0x68737a, [-width * 0.43, 0, 0]);
+        box([width * 0.08, height * 0.28, depth * 0.82], 0x68737a, [width * 0.43, 0, 0]);
+      } else {
+        const isTranslucent = ["panel", "lap_bottom", "prt_top"].includes(part.id);
+        box([width, height, depth], part.color, [0, 0, 0], { transparent: isTranslucent, opacity: isTranslucent ? 0.25 : 1 });
+      }
+
+      group.position.set(...part.slotPos);
+      return group;
+    }
+
+    function build3DSlots() {
+      Object.values(slotMeshes).forEach(m => deviceGroup.remove(m));
+      for (const k in slotMeshes) delete slotMeshes[k];
+
+      // En modo diagnóstico mostramos todos los slots del equipo para permitir inspección libre
+      const partsToShow = mode === "diag"
+        ? getPhases().flatMap(p => p.parts)
+        : getPhases()[currentPhase].parts;
+
+      partsToShow.forEach(part => {
+        if (installedIds.has(part.id)) return;
+        const slotGeom = new THREE.BoxGeometry(...part.slotSize);
+        const slotMat = new THREE.MeshBasicMaterial({
+          color: faultyIds.has(part.id) ? 0xf59e0b : 0xff9800,
+          transparent: true,
+          opacity: 0.0
+        });
+        const slotMesh = new THREE.Mesh(slotGeom, slotMat);
+        slotMesh.position.set(...part.slotPos);
+        slotMesh.userData = { part };
+
+        const edges = new THREE.EdgesGeometry(slotGeom);
+        const line = new THREE.LineSegments(
+          edges,
+          new THREE.LineBasicMaterial({ color: 0x6b7280, transparent: true, opacity: 0.45 })
+        );
+        slotMesh.add(line);
+        slotMesh.userData.edgeLine = line;
+
+        deviceGroup.add(slotMesh);
+        slotMeshes[part.id] = slotMesh;
+      });
+      updateSlotHighlights();
+    }
+
+    function updateSlotHighlights() {
+      Object.entries(slotMeshes).forEach(([id, mesh]) => {
+        const isTarget = selectedPart && selectedPart.id === id;
+        const isFaulty = faultyIds.has(id);
+
+        if (mode === "learn" && isTarget) {
+          mesh.material.opacity = 0.38;
+          mesh.userData.edgeLine.material.color.setHex(0xff9800);
+          mesh.userData.edgeLine.material.opacity = 1;
+        } else if (mode === "diag" && isFaulty) {
+          mesh.material.opacity = isTarget ? 0.42 : 0.18;
+          mesh.userData.edgeLine.material.color.setHex(0xf59e0b);
+          mesh.userData.edgeLine.material.opacity = 0.95;
+        } else {
+          mesh.material.opacity = 0.02;
+          mesh.userData.edgeLine.material.color.setHex(mode === "learn" ? 0x6b7280 : 0x262626);
+          mesh.userData.edgeLine.material.opacity = mode === "learn" ? 0.45 : 0.12;
+        }
+      });
+    }
+
+    // ==========================================
+    // 4. MINI VISOR 3D DE INSPECCIÓN
+    // ==========================================
+    const prevContainer = document.getElementById("preview3d");
+    const prevScene = new THREE.Scene();
+    const prevCam = new THREE.PerspectiveCamera(40, prevContainer.clientWidth / prevContainer.clientHeight, 0.1, 20);
+    prevCam.position.set(0, 0, 2.6);
+    const prevRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    prevRenderer.setSize(prevContainer.clientWidth, prevContainer.clientHeight);
+    prevContainer.appendChild(prevRenderer.domElement);
+    prevScene.add(new THREE.AmbientLight(0xffffff, 0.85));
+    const pLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    pLight.position.set(2, 3, 4);
+    prevScene.add(pLight);
+
+    let previewObject = null;
+
+    function updatePreview3D(part) {
+      if (previewObject) prevScene.remove(previewObject);
+      if (!part) return;
+      previewObject = createComponentMesh(part, false);
+      previewObject.position.set(0, 0, 0);
+      previewObject.rotation.z = THREE.MathUtils.degToRad(-currentAngle);
+      if (["gpu", "nic", "psu_screws", "lap_bat", "lap_ssd", "lap_ram1", "lap_ram2", "lap_fan", "lap_bottom", "lap_screws", "prt_paper", "prt_tray", "prt_top"].includes(part.id)) {
+        previewObject.rotation.x = Math.PI / 2;
+      } else if (part.id === "ram1" || part.id === "ram2") {
+        previewObject.rotation.y = -Math.PI / 2;
+      }
+      const bounds = new THREE.Box3().setFromObject(previewObject);
+      const size = bounds.getSize(new THREE.Vector3());
+      const maxDimension = Math.max(size.x, size.y, size.z);
+      if (maxDimension > 0) previewObject.scale.setScalar(Math.min(1.45 / maxDimension, 2.5));
+      prevScene.add(previewObject);
+    }
+
+    // ==========================================
+    // 5. RAYCASTER
+    // ==========================================
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let pointerDownPos = { x: 0, y: 0 };
+
+    renderer.domElement.addEventListener("pointerdown", e => {
+      pointerDownPos = { x: e.clientX, y: e.clientY };
+    });
+
+    renderer.domElement.addEventListener("pointermove", e => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(Object.values(slotMeshes), false);
+      const label = document.getElementById("hoverLabel");
+      if (hits.length > 0) {
+        const part = hits[0].object.userData.part;
+        if (mode === "learn") {
+          label.textContent = "Ranura: " + part.name;
+        } else if (mode === "diag") {
+          label.textContent = faultyIds.has(part.id)
+            ? "⚠️ Componente con falla: " + part.name
+            : "Inspeccionar: " + part.name;
+        }
+        renderer.domElement.style.cursor = "pointer";
+      } else {
+        label.textContent = "";
+        renderer.domElement.style.cursor = "grab";
+      }
+    });
+
+    renderer.domElement.addEventListener("pointerup", e => {
+      const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+      if (dist > 6) return;
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(Object.values(slotMeshes), false);
+      if (hits.length > 0) attemptInstall(hits[0].object.userData.part);
+    });
+
+    // ==========================================
+    // 6. BÚSQUEDA, DIAGNÓSTICO Y ENSAMBLAJE
+    // ==========================================
+    function handleSearch() {
+      const input = document.getElementById("partSearchInput");
+      searchQuery = input.value.trim().toLowerCase();
+      document.getElementById("searchClearBtn").style.display = searchQuery ? "block" : "none";
+      renderParts();
+    }
+
+    function clearSearch() {
+      document.getElementById("partSearchInput").value = "";
+      searchQuery = "";
+      document.getElementById("searchClearBtn").style.display = "none";
+      renderParts();
+    }
+
+    function renderCameraBar() {
+      const bar = document.getElementById("cameraBar");
+      bar.innerHTML = "";
+      getDevice().cameras.forEach(cam => {
+        const btn = document.createElement("button");
+        btn.textContent = cam.label;
+        btn.onclick = () => setCameraView(cam.key);
+        bar.appendChild(btn);
+      });
+    }
+
+    function setCameraView(key) {
+      const cam = getDevice().cameras.find(c => c.key === key) || getDevice().cameras[0];
+      camera.position.set(...cam.pos);
+      controls.target.set(...cam.target);
+      controls.update();
+    }
+
+    function switchDevice(devKey) {
+      currentDeviceKey = devKey;
+      currentDiagIndex = 0;
+      document.getElementById("devPc").classList.toggle("active", devKey === "pc");
+      document.getElementById("devLaptop").classList.toggle("active", devKey === "laptop");
+      document.getElementById("devPrinter").classList.toggle("active", devKey === "printer");
+      document.getElementById("headerTitle").textContent = getDevice().title;
+      document.getElementById("reportDeviceSubtitle").textContent = "Equipo evaluado: " + getDevice().title;
+      renderCameraBar();
+      resetSim();
+    }
+
+    function setMode(newMode) {
+      mode = newMode;
+      document.getElementById("btnLearn").classList.toggle("active", newMode === "learn");
+      document.getElementById("btnTest").classList.toggle("active", newMode === "test");
+      document.getElementById("btnDiag").classList.toggle("diag-active", newMode === "diag");
+      document.getElementById("diagBanner").classList.toggle("visible", newMode === "diag");
+      document.getElementById("invTitle").textContent = newMode === "diag" ? "1. Repuestos Disponibles" : "1. Inventario de Piezas";
+
+      if (newMode === "diag") {
+        setupDiagnosticCase();
+      } else {
+        resetSim();
+      }
+    }
+
+    function setupDiagnosticCase() {
+      const cases = getDevice().diagCases;
+      const activeCase = cases[currentDiagIndex % cases.length];
+
+      installedIds.clear();
+      faultyIds = new Set(activeCase.faultyIds);
+      selectedPart = null;
+      score = 100;
+      errorCount = 0;
+      errorLogs = [];
+      document.getElementById("hudScore").textContent = "100";
+
+      buildBaseChassis3D();
+
+      // Instalar todas las piezas buenas y dejar las averiadas en estado de falla
+      getPhases().flatMap(p => p.parts).forEach(part => {
+        if (faultyIds.has(part.id)) {
+          const brokenMesh = createComponentMesh(part, true);
+          deviceGroup.add(brokenMesh);
+          installedMeshes[part.id] = brokenMesh;
+        } else {
+          installedIds.add(part.id);
+          const okMesh = createComponentMesh(part, false);
+          deviceGroup.add(okMesh);
+          installedMeshes[part.id] = okMesh;
+        }
+      });
+
+      document.getElementById("diagSymptomText").textContent = activeCase.symptom;
+      document.getElementById("hudProgress").textContent = `${installedIds.size}/${getTotalParts()}`;
+      setCameraView(getDevice().cameras[0].key);
+      startTimer();
+      setFeedback(`Diagnóstico: ${activeCase.hint}`);
+      renderAll();
+    }
+
+    function nextDiagCase() {
+      currentDiagIndex++;
+      setupDiagnosticCase();
+    }
+
+    function testPowerOn() {
+      if (faultyIds.size === 0) {
+        clearInterval(timerInterval);
+        setFeedback("✅ ¡Prueba exitosa! El equipo encendió y superó el diagnóstico sin errores.");
+        setTimeout(openReport, 800);
+      } else {
+        const msg = `❌ Falla persistente: Aún quedan ${faultyIds.size} componente(s) defectuoso(s) sin reparar.`;
+        setFeedback(msg, true);
+        registerError("Prueba de encendido fallida antes de corregir todas las averías.");
+      }
+    }
+
+    function setFeedback(msg, isError = false) {
+      const box = document.getElementById("feedbackBox");
+      box.textContent = msg;
+      box.style.borderLeftColor = isError ? "#ef4444" : "#2ea043";
+    }
+
+    function registerError(reason) {
+      errorCount++;
+      score = Math.max(0, score - 5);
+      const timeStr = document.getElementById("hudTimer").textContent;
+      errorLogs.push(`[${timeStr}] ${reason}`);
+      document.getElementById("hudScore").textContent = score;
+    }
+
+    function selectPart(part) {
+      selectedPart = part;
+      currentAngle = 0;
+      document.getElementById("partDesc").textContent = part.name;
+      document.getElementById("partTip").textContent = mode === "test"
+        ? "Alinea la pieza según el estándar del fabricante."
+        : part.tip;
+      document.getElementById("angleLabel").textContent = "0°";
+      document.getElementById("targetAngleLabel").textContent = mode === "test" ? "Oculto" : `${part.targetAngle}°`;
+      updatePreview3D(part);
+      renderParts();
+      updateSlotHighlights();
+    }
+
+    function rotatePart(deg) {
+      if (!selectedPart) return;
+      currentAngle = (currentAngle + deg + 360) % 360;
+      document.getElementById("angleLabel").textContent = `${currentAngle}°`;
+      if (previewObject) previewObject.rotation.z = THREE.MathUtils.degToRad(-currentAngle);
+    }
+
+    function attemptInstall(targetPart) {
+      if (!selectedPart) {
+        setFeedback("Selecciona primero un componente o repuesto en el panel izquierdo.", true);
+        return;
+      }
+      if (selectedPart.id !== targetPart.id) {
+        const msg = `Ubicación incorrecta: "${selectedPart.name}" no corresponde al espacio de "${targetPart.name}".`;
+        setFeedback(msg, true);
+        registerError(msg);
+        return;
+      }
+      if (targetPart.requires && !installedIds.has(targetPart.requires)) {
+        const reqName = getPhases().flatMap(p => p.parts).find(p => p.id === targetPart.requires)?.name;
+        const msg = `Secuencia incorrecta: instala o repara primero "${reqName}".`;
+        setFeedback(msg, true);
+        registerError(msg);
+        return;
+      }
+      if (currentAngle !== targetPart.targetAngle) {
+        const msg = `Orientación incorrecta (${currentAngle}°) para "${targetPart.name}".`;
+        setFeedback(msg, true);
+        registerError(msg);
+        return;
+      }
+
+      // Si había una pieza averiada en modo diagnóstico, retirarla primero
+      if (installedMeshes[targetPart.id]) {
+        deviceGroup.remove(installedMeshes[targetPart.id]);
+      }
+      faultyIds.delete(targetPart.id);
+      installedIds.add(targetPart.id);
+
+      const mesh3d = createComponentMesh(targetPart, false);
+      deviceGroup.add(mesh3d);
+      installedMeshes[targetPart.id] = mesh3d;
+
+      setFeedback(
+        mode === "diag"
+          ? `🔧 Repuesto instalado: ${targetPart.name} reemplazado correctamente.`
+          : `¡Correcto! ${targetPart.name} ensamblado.`
+      );
+
+      selectedPart = null;
+      if (previewObject) prevScene.remove(previewObject);
+      document.getElementById("partDesc").textContent = "Pieza lista";
+      document.getElementById("partTip").textContent = "Selecciona el siguiente componente.";
+      document.getElementById("hudProgress").textContent = `${installedIds.size}/${getTotalParts()}`;
+
+      renderAll();
+
+      if (mode === "diag" && faultyIds.size === 0) {
+        setFeedback("¡Todas las fallas han sido corregidas! Haz clic en '⚡ Probar Encendido' para validar.");
+        return;
+      }
+
+      if (mode !== "diag") {
+        const currentDone = getPhases()[currentPhase].parts.every(p => installedIds.has(p.id));
+        if (currentDone && currentPhase < getPhases().length - 1) {
+          setTimeout(() => {
+            currentPhase++;
+            setCameraView(getPhases()[currentPhase].camera);
+            renderAll();
+            setFeedback(`Fase completada. Avanzando a: ${getPhases()[currentPhase].name}`);
+          }, 700);
+        } else if (installedIds.size === getTotalParts()) {
+          clearInterval(timerInterval);
+          setFeedback(`¡Completado! Has ensamblado todo el equipo (${getDevice().title}).`);
+          setTimeout(openReport, 900);
+        }
+      }
+    }
+
+    function renderTabs() {
+      const container = document.getElementById("phaseTabs");
+      container.innerHTML = "";
+      if (mode === "diag") {
+        container.style.display = "none";
+        return;
+      }
+      container.style.display = "flex";
+      getPhases().forEach((p, idx) => {
+        const done = p.parts.every(pt => installedIds.has(pt.id));
+        const tab = document.createElement("div");
+        tab.className = `tab ${idx === currentPhase ? "active" : ""} ${done ? "completed" : ""}`;
+        tab.textContent = p.name;
+        tab.onclick = () => {
+          currentPhase = idx;
+          selectedPart = null;
+          setCameraView(p.camera);
+          renderAll();
+        };
+        container.appendChild(tab);
+      });
+    }
+
+    function renderParts() {
+      const list = document.getElementById("partsList");
+      list.innerHTML = "";
+
+      // Si hay búsqueda activa o estamos en modo diagnóstico, buscar en todo el equipo
+      const baseParts = (searchQuery || mode === "diag")
+        ? getPhases().flatMap(p => p.parts)
+        : getPhases()[currentPhase].parts;
+
+      const filteredParts = searchQuery
+        ? baseParts.filter(p => p.name.toLowerCase().includes(searchQuery) || p.tip.toLowerCase().includes(searchQuery))
+        : baseParts;
+
+      const doneCount = baseParts.filter(p => installedIds.has(p.id)).length;
+      document.getElementById("phaseCount").textContent = `${doneCount}/${baseParts.length}`;
+
+      if (filteredParts.length === 0) {
+        const emptyState = document.createElement("div");
+        emptyState.style.cssText = "font-size:12px; color:var(--text-muted); text-align:center; padding:16px;";
+        emptyState.textContent = `No se encontraron piezas con "${searchQuery}".`;
+        list.appendChild(emptyState);
+        return;
+      }
+
+      filteredParts.forEach(part => {
+        const isInstalled = installedIds.has(part.id);
+        const item = document.createElement("div");
+        const icon = document.createElement("div");
+        const details = document.createElement("div");
+        const name = document.createElement("div");
+        const state = document.createElement("div");
+        item.className = `part-item ${selectedPart?.id === part.id ? "selected" : ""} ${isInstalled ? "installed" : ""}`;
+        icon.className = "part-icon";
+        icon.textContent = part.icon;
+        name.style.cssText = "font-size:12.5px;font-weight:700;";
+        name.textContent = part.name;
+        state.style.cssText = "font-size:11px;color:var(--text-muted);";
+        state.textContent = isInstalled ? "Operativo / Instalado" : (mode === "diag" ? "Repuesto nuevo" : "Clic para seleccionar");
+        details.append(name, state);
+        item.append(icon, details);
+        item.onclick = () => selectPart(part);
+        list.appendChild(item);
+      });
+    }
+
+    function renderAll() {
+      renderTabs();
+      renderParts();
+      build3DSlots();
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      secondsElapsed = 0;
+      document.getElementById("hudTimer").textContent = "00:00";
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, "0");
+        const secs = String(secondsElapsed % 60).padStart(2, "0");
+        document.getElementById("hudTimer").textContent = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function resetSim() {
+      if (mode === "diag") {
+        setupDiagnosticCase();
+        return;
+      }
+      installedIds.clear();
+      faultyIds.clear();
+      selectedPart = null;
+      currentPhase = 0;
+      score = 100;
+      errorCount = 0;
+      errorLogs = [];
+      document.getElementById("hudScore").textContent = "100";
+      document.getElementById("hudProgress").textContent = `0/${getTotalParts()}`;
+      if (previewObject) prevScene.remove(previewObject);
+      buildBaseChassis3D();
+      setCameraView(getDevice().cameras[0].key);
+      startTimer();
+      setFeedback(`Simulador listo para: ${getDevice().title}.`);
+      renderAll();
+    }
+
+    function openReport() {
+      const grade5 = ((score / 100) * 5).toFixed(1);
+      document.getElementById("repGrade").textContent = `${grade5} / 5.0 (${score}%)`;
+      document.getElementById("repTime").textContent = document.getElementById("hudTimer").textContent;
+      document.getElementById("repErrors").textContent = errorCount;
+      const reportLog = document.getElementById("repLog");
+      reportLog.replaceChildren();
+      if (errorLogs.length) {
+        errorLogs.forEach(error => {
+          const entry = document.createElement("div");
+          entry.textContent = `• ${error}`;
+          reportLog.appendChild(entry);
+        });
+      } else {
+        reportLog.textContent = "Sin errores registrados. Procedimiento técnico impecable.";
+      }
+      document.getElementById("reportModal").classList.add("open");
+    }
+
+    function closeReport() {
+      document.getElementById("reportModal").classList.remove("open");
+    }
+
+    function downloadCertificate() {
+      const student = document.getElementById("studentName").value.trim() || "Aprendiz / Estudiante";
+      const grade5 = ((score / 100) * 5).toFixed(1);
+      const time = document.getElementById("hudTimer").textContent;
+      const modeName = mode === "learn" ? "Aprendizaje Guiado" : (mode === "test" ? "Evaluación (Test)" : "Diagnóstico de Fallas");
+      const content = [
+        "====================================================",
+        "ACTA DE PRÁCTICA - SIMULADOR 3D DE HARDWARE",
+        "Portal: Competencias Digitales",
+        "====================================================",
+        `Estudiante: ${student}`,
+        `Equipo: ${getDevice().title}`,
+        `Modalidad: ${modeName}`,
+        `Piezas operativas: ${installedIds.size} de ${getTotalParts()}`,
+        `Tiempo empleado: ${time}`,
+        `Intentos fallidos: ${errorCount}`,
+        `Calificación Final: ${grade5} / 5.0 (${score} pts)`,
+        "----------------------------------------------------",
+        "BITÁCORA DE DIAGNÓSTICO:",
+        errorLogs.length ? errorLogs.join("\n") : "Ningún error detectado.",
+        "===================================================="
+      ].join("\n");
+
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const link = document.createElement("a");
+      const reportUrl = URL.createObjectURL(blob);
+      link.href = reportUrl;
+      const safeStudentName = student.replace(/[<>:"/\\|?*\u0000-\u001f]/g, "_").replace(/\s+/g, "_");
+      link.download = `Reporte_${currentDeviceKey}_${mode}_${safeStudentName}.txt`;
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(reportUrl), 1000);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      if (animatedSpinMesh) animatedSpinMesh.rotation.z += 0.08;
+      if (previewObject) previewObject.rotation.y += 0.015;
+      renderer.render(scene, camera);
+      prevRenderer.render(prevScene, prevCam);
+    }
+
+    function resizeRenderers() {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (width > 0 && height > 0) {
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+      }
+
+      const previewWidth = prevContainer.clientWidth;
+      const previewHeight = prevContainer.clientHeight;
+      if (previewWidth > 0 && previewHeight > 0) {
+        prevCam.aspect = previewWidth / previewHeight;
+        prevCam.updateProjectionMatrix();
+        prevRenderer.setSize(previewWidth, previewHeight);
+      }
+    }
+
+    window.addEventListener("resize", resizeRenderers);
+    const rendererResizeObserver = new ResizeObserver(resizeRenderers);
+    rendererResizeObserver.observe(container);
+    rendererResizeObserver.observe(prevContainer);
+    resizeRenderers();
+
+    renderCameraBar();
+    resetSim();
+    animate();
+  </script>
+</body>
+</html>
